@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 
 class TransferActivity : AppCompatActivity() {
@@ -26,7 +27,7 @@ class TransferActivity : AppCompatActivity() {
             }
             lifecycleScope.launch {
                 try {
-                    SupabaseWallet.transferToUsername(username, amount)
+                    FirebaseWallet.transferToUsername(username, amount)
                     Toast.makeText(this@TransferActivity, "Transfer sent!", Toast.LENGTH_LONG).show()
                     finish()
                 } catch (e: Exception) {

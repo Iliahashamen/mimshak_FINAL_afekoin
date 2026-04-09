@@ -7,21 +7,18 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import io.supabase.gotrue.auth
-import io.supabase.gotrue.providers.builtin.Email
-import io.supabase.postgrest.postgrest
+import com.example.mimshak_final_afekoin.firebase.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.tasks.await
 
-// This data class represents the structure of our 'profiles' table
-@Serializable
-data class Profile(
-    val id: String,
-    val username: String,
-    val balance: Double = 30.0 // Default welcome bonus
-)
-
+/**
+ * [התחברות] — רכיב שרת ראשון: Firebase Authentication (אימייל/סיסמה).
+ * לאחר הרשמה נוצר גם מסמך ב-Firestore עם איזון התחלתי.
+ */
 class LoginActivity : AppCompatActivity() {
+
+    private val auth get() = FirebaseAuth.getInstance()
 
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
@@ -32,32 +29,22 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Initialize Views
-        emailEditText = findViewById(R.id.emailEditText) // Use your actual view IDs
+        emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         signUpButton = findViewById(R.id.signUpButton)
         loginButton = findViewById(R.id.loginButton)
 
-        // --- Session Check ---
-        lifecycleScope.launch {
-            val session = SupabaseManager.client.auth.session()
-            if (session != null) {
-                navigateToMain()
-            }
+        if (auth.currentUser != null) {
+            navigateToMain()
+            return
         }
 
-        // --- Button Click Listeners ---
-        signUpButton.setOnClickListener {
-            handleSignUp()
-        }
-
-        loginButton.setOnClickListener {
-            handleLogin()
-        }
+        signUpButton.setOnClickListener { handleSignUp() }
+        loginButton.setOnClickListener { handleLogin() }
     }
 
     private fun handleSignUp() {
-        val email = emailEditText.text.toString()
+        val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
         if (email.isBlank() || password.isBlank()) {
@@ -67,22 +54,11 @@ class LoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // 1. Create the user in Supabase Auth
-                val user = SupabaseManager.client.auth.signUp(Email) {
-                    this.email = email
-                    this.password = password
-                }
-
-                // 2. Create the corresponding profile in the 'profiles' table
-                if (user != null) {
-                    val username = email.substringBefore('@').lowercase()
-                    val newProfile = Profile(id = user.id, username = username)
-                    
-                    SupabaseManager.client.postgrest.from("profiles").upsert(newProfile)
-
-                    Toast.makeText(this@LoginActivity, "Sign-up successful! Please log in.", Toast.LENGTH_LONG).show()
-                }
-
+                val result = auth.createUserWithEmailAndPassword(email, password).await()
+                val username = email.substringBefore('@').lowercase()
+                UserRepository.createUserDocument(result.user!!.uid, username)
+                Toast.makeText(this@LoginActivity, "Welcome to Afekoin!", Toast.LENGTH_SHORT).show()
+                navigateToMain()
             } catch (e: Exception) {
                 Toast.makeText(this@LoginActivity, "Sign-up failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -90,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleLogin() {
-        val email = emailEditText.text.toString()
+        val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
         if (email.isBlank() || password.isBlank()) {
@@ -100,13 +76,8 @@ class LoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                SupabaseManager.client.auth.signIn(Email) {
-                    this.email = email
-                    this.password = password
-                }
-                
+                auth.signInWithEmailAndPassword(email, password).await()
                 navigateToMain()
-
             } catch (e: Exception) {
                 Toast.makeText(this@LoginActivity, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }

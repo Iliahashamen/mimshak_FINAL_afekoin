@@ -8,11 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.supabase.gotrue.auth
-import io.supabase.postgrest.postgrest
-import io.supabase.postgrest.query.Order
+import com.example.mimshak_final_afekoin.firebase.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
+/** היסטוריית תנועות — נקראת מ-Firestore (שיתוף/אחסון מרכזי). */
 class HistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,26 +26,21 @@ class HistoryActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val user = SupabaseManager.client.auth.currentUserOrNull()
-                if (user == null) {
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                if (uid == null) {
                     startActivity(Intent(this@HistoryActivity, LoginActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     })
                     finish()
                     return@launch
                 }
-                val rows = SupabaseManager.client.postgrest
-                    .from("transactions")
-                    .select {
-                        filter("user_id", "eq", user.id)
-                        order("created_at", Order.DESCENDING)
-                    }
-                    .decodeList<Transaction>()
+                val rows = UserRepository.transactionsForUser(uid)
                 rv.adapter = HistoryAdapter(rows)
             } catch (e: Exception) {
+                val msg = e.message ?: ""
                 Toast.makeText(
                     this@HistoryActivity,
-                    "Could not load history: ${e.message}",
+                    "Could not load history. If this mentions an index, create it in the Firebase console link from the log.\n$msg",
                     Toast.LENGTH_LONG
                 ).show()
                 rv.adapter = HistoryAdapter(emptyList())

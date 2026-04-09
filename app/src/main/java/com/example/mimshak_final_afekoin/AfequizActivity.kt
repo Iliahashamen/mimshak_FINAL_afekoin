@@ -11,8 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import io.supabase.gotrue.auth
-import io.supabase.postgrest.postgrest
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -128,31 +128,16 @@ class AfequizActivity : AppCompatActivity() {
         if (score == 15) {
             lifecycleScope.launch {
                 try {
-                    val user = SupabaseManager.client.auth.currentUserOrNull()
-                    if (user == null) {
+                    if (FirebaseAuth.getInstance().currentUser == null) {
                         navigateToLogin()
                         return@launch
                     }
-
                     val quizReward = 4.00
-
-                    // Safely increment the user's balance using the RPC function
-                    SupabaseManager.client.postgrest
-                        .rpc(function = "add_balance", parameters = mapOf("user_id" to user.id, "amount_to_add" to quizReward))
-                    
-                    // Log the transaction
-                    val newTransaction = Transaction(
-                        user_id = user.id,
-                        description = "Quiz Reward",
-                        amount = quizReward
-                    )
-                    SupabaseManager.client.postgrest.from("transactions").insert(newTransaction)
-
+                    FirebaseWallet.addCredits(quizReward, "Quiz reward (perfect score)")
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@AfequizActivity, "Congratulations! You earned +$quizReward AFK!", Toast.LENGTH_LONG).show()
                         navigateToResults()
                     }
-
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@AfequizActivity, "Error saving reward: ${e.message}", Toast.LENGTH_SHORT).show()

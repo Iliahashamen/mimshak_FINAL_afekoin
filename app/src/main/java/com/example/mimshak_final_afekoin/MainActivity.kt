@@ -4,64 +4,91 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import io.supabase.gotrue.auth
-import io.supabase.postgrest.postgrest
+import coil.load
+import com.example.mimshak_final_afekoin.data.Profile
+import com.example.mimshak_final_afekoin.firebase.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+/**
+ * מסך ראשי: מציג פרופיל מ-Firestore, איזון, ואפשרות להעלאת תמונת פרופיל ל-Storage.
+ */
 class MainActivity : AppCompatActivity() {
+
+    private val auth get() = FirebaseAuth.getInstance()
 
     private var isHidden = false
     private var currentUserProfile: Profile? = null
     private lateinit var tvGreeting: TextView
     private lateinit var tvBalance: TextView
     private lateinit var btnEye: ImageButton
+    private lateinit var ivProfileAvatar: ImageView
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri == null) return@registerForActivityResult
+        lifecycleScope.launch {
+            try {
+                UserRepository.uploadProfilePhoto(uri)
+                Toast.makeText(this@MainActivity, "Profile photo updated", Toast.LENGTH_SHORT).show()
+                fetchUserProfile()
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, e.message ?: "Upload failed", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize views
         tvGreeting = findViewById(R.id.tvGreeting)
         tvBalance = findViewById(R.id.tvBalance)
         btnEye = findViewById(R.id.btnHideBalance)
+        ivProfileAvatar = findViewById(R.id.ivProfileAvatar)
 
-        // Setup navigation and placeholder buttons
+        ivProfileAvatar.setOnClickListener {
+            pickImage.launch("image/*")
+        }
+
         setupButtons()
     }
 
     override fun onResume() {
         super.onResume()
-        fetchUserProfile() // Fetch/refresh user data every time the activity is resumed
+        fetchUserProfile()
     }
 
     private fun fetchUserProfile() {
         lifecycleScope.launch {
             try {
-                val user = SupabaseManager.client.auth.currentUserOrNull()
+                val user = auth.currentUser
                 if (user == null) {
-                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
                     return@launch
                 }
 
-                val profile = SupabaseManager.client.postgrest
-                    .from("profiles")
-                    .select { filter("id", "eq", user.id) }
-                    .decodeSingleOrNull<Profile>()
-
+                var profile = UserRepository.getProfile(user.uid)
+                if (profile == null && user.email != null) {
+                    // שחזור: משתמש ב-Auth בלי מסמך Firestore (למשל אחרי מעבר ממערכת אחרת)
+                    val uname = user.email!!.substringBefore('@').lowercase()
+                    UserRepository.createUserDocument(user.uid, uname)
+                    profile = UserRepository.getProfile(user.uid)
+                }
                 if (profile != null) {
                     currentUserProfile = profile
                     updateUI()
                 } else {
                     Toast.makeText(this@MainActivity, "Could not load user profile.", Toast.LENGTH_SHORT).show()
                 }
-
             } catch (e: Exception) {
                 Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -69,9 +96,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        currentUserProfile?.let {
-            tvGreeting.text = "${getGreetingPrefix()}, ${it.username.uppercase()}!"
+        currentUserProfile?.let { p ->
+            tvGreeting.text = "${getGreetingPrefix()}, ${p.username.uppercase()}!"
             updateBalanceDisplay()
+            ivProfileAvatar.load(p.photoUrl) {
+                placeholder(R.mipmap.afekoin_logo)
+                error(R.mipmap.afekoin_logo)
+                crossfade(true)
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 
 class PayActivity : AppCompatActivity() {
@@ -16,7 +17,7 @@ class PayActivity : AppCompatActivity() {
         fun buy(amount: Double, label: String) {
             lifecycleScope.launch {
                 try {
-                    SupabaseWallet.charge(amount, "Store: $label")
+                    FirebaseWallet.charge(amount, "Store: $label")
                     Toast.makeText(this@PayActivity, "Purchased $label", Toast.LENGTH_LONG).show()
                     finish()
                 } catch (e: Exception) {

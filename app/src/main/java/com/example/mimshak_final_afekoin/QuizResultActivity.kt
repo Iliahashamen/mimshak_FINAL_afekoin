@@ -6,8 +6,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import io.supabase.gotrue.auth
-import io.supabase.postgrest.postgrest
+import com.example.mimshak_final_afekoin.firebase.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,12 +24,9 @@ class QuizResultActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val user = SupabaseManager.client.auth.currentUserOrNull()
-                val balText = if (user != null) {
-                    val p = SupabaseManager.client.postgrest
-                        .from("profiles")
-                        .select { filter("id", "eq", user.id) }
-                        .decodeSingleOrNull<Profile>()
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                val balText = if (uid != null) {
+                    val p = UserRepository.getProfile(uid)
                     if (p != null) "Balance: ${String.format("%.2f", p.balance)} AFK"
                     else "Balance unavailable"
                 } else {

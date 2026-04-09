@@ -6,6 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -29,7 +30,7 @@ class LiebnitzActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     if (reward > 0) {
-                        SupabaseWallet.addCredits(reward, "Liebnitz run (score $finalScore)")
+                        FirebaseWallet.addCredits(reward, "Liebnitz run (score $finalScore)")
                         Toast.makeText(
                             this@LiebnitzActivity,
                             "Run complete! +${String.format("%.2f", reward)} AFK",

@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mimshak_final_afekoin.data.LedgerEntry
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
-class HistoryAdapter(private val transactions: List<Transaction>) : RecyclerView.Adapter<HistoryAdapter.TransactionViewHolder>() {
+class HistoryAdapter(private val entries: List<LedgerEntry>) :
+    RecyclerView.Adapter<HistoryAdapter.TransactionViewHolder>() {
 
-    // Standard ISO 8601 format from Supabase with timezone
-    private val supabaseDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX", Locale.getDefault())
-    // Desired output format
-    private val displayDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    private val displayFormat = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false)
@@ -22,43 +22,28 @@ class HistoryAdapter(private val transactions: List<Transaction>) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val transaction = transactions[position]
-        holder.bind(transaction)
+        holder.bind(entries[position])
     }
 
-    override fun getItemCount() = transactions.size
+    override fun getItemCount() = entries.size
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTranTitle)
         private val tvAmount: TextView = itemView.findViewById(R.id.tvTranAmount)
         private val tvDate: TextView = itemView.findViewById(R.id.tvTranDate)
 
-        fun bind(transaction: Transaction) {
-            tvTitle.text = transaction.description
-
-            val isPositive = transaction.amount >= 0
-            val amountText = String.format("%s%.2f AFK", if (isPositive) "+" else "", transaction.amount)
+        fun bind(entry: LedgerEntry) {
+            tvTitle.text = entry.description
+            val isPositive = entry.amount >= 0
+            val amountText = String.format("%s%.2f AFK", if (isPositive) "+" else "", entry.amount)
             tvAmount.text = amountText
             tvAmount.setTextColor(if (isPositive) Color.parseColor("#2E7D32") else Color.parseColor("#C62828"))
-
-            tvDate.text = formatCreatedAt(transaction.created_at)
+            tvDate.text = formatTimestamp(entry.createdAt)
         }
     }
 
-    private fun formatCreatedAt(createdAt: String?): String {
-        if (createdAt.isNullOrBlank()) return ""
-        return try {
-            val instant = java.time.Instant.parse(createdAt)
-            val local = java.time.LocalDateTime.ofInstant(instant, java.time.ZoneId.systemDefault())
-            val fmt = java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm", Locale.getDefault())
-            local.format(fmt)
-        } catch (_: Exception) {
-            try {
-                val date = supabaseDateFormat.parse(createdAt)
-                if (date != null) displayDateFormat.format(date) else createdAt.take(16)
-            } catch (_: Exception) {
-                createdAt.take(16)
-            }
-        }
+    private fun formatTimestamp(ts: Timestamp?): String {
+        if (ts == null) return ""
+        return displayFormat.format(ts.toDate())
     }
 }

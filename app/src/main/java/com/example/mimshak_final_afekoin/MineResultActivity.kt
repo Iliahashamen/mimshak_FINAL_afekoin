@@ -7,8 +7,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import io.supabase.gotrue.auth
-import io.supabase.postgrest.postgrest
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
+import com.example.mimshak_final_afekoin.firebase.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class MineResultActivity : AppCompatActivity() {
@@ -24,14 +25,9 @@ class MineResultActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                SupabaseWallet.addCredits(reward, "Mining session reward")
-                val user = SupabaseManager.client.auth.currentUserOrNull()
-                val bal = if (user != null) {
-                    SupabaseManager.client.postgrest
-                        .from("profiles")
-                        .select { filter("id", "eq", user.id) }
-                        .decodeSingleOrNull<Profile>()?.balance
-                } else null
+                FirebaseWallet.addCredits(reward, "Mining session reward")
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                val bal = if (uid != null) UserRepository.getProfile(uid)?.balance else null
                 findViewById<TextView>(R.id.tvNewBalance).text =
                     if (bal != null) "Balance: ${String.format("%.2f", bal)} AFK"
                     else getString(R.string.balance_updated_check_home)

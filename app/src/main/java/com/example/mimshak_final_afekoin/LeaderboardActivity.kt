@@ -6,14 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.supabase.postgrest.postgrest
-import io.supabase.postgrest.query.Order
+import com.example.mimshak_final_afekoin.firebase.UserRepository
 import kotlinx.coroutines.launch
 
+/** לוח תוצאות גלובלי — כל המשתמשים רואים איזונים מעודכנים (שיתוף מידע). */
 class LeaderboardActivity : AppCompatActivity() {
 
     private lateinit var rvLeaderboard: RecyclerView
-    private lateinit var leaderboardAdapter: LeaderboardAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,15 +27,8 @@ class LeaderboardActivity : AppCompatActivity() {
     private fun fetchLeaderboardData() {
         lifecycleScope.launch {
             try {
-                val profiles = SupabaseManager.client.postgrest
-                    .from("profiles")
-                    .select {
-                        order("balance", Order.DESCENDING)
-                    }.decodeList<Profile>()
-
-                leaderboardAdapter = LeaderboardAdapter(profiles)
-                rvLeaderboard.adapter = leaderboardAdapter
-
+                val profiles = UserRepository.leaderboardTop()
+                rvLeaderboard.adapter = LeaderboardAdapter(profiles)
             } catch (e: Exception) {
                 Toast.makeText(this@LeaderboardActivity, "Failed to load leaderboard: ${e.message}", Toast.LENGTH_SHORT).show()
             }

@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -66,7 +67,7 @@ class AfeklikerActivity : AppCompatActivity() {
         val reward = min(2.0, taps * 0.02)
         lifecycleScope.launch {
             try {
-                SupabaseWallet.addCredits(reward, "Afekliker session")
+                FirebaseWallet.addCredits(reward, "Afekliker session")
                 Toast.makeText(
                     this@AfeklikerActivity,
                     "Earned +${String.format("%.2f", reward)} AFK",
