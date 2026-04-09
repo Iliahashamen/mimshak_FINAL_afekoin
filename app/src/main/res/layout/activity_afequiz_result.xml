@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#F8F9FA">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GAME OVER"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#FF5252" />
+
+    <TextView
+        android:id="@+id/tvFinalScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You got 6 questions right!"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tvNewBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Balance: 36.00 AFK"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/afeka_green"
+        android:layout_marginTop="24dp" />
+
+    <Button
+        android:id="@+id/btnPlayAgain"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="PLAY AGAIN"
+        android:layout_marginTop="40dp"
+        android:backgroundTint="@color/afeka_green" />
+
+    <Button
+        android:id="@+id/btnBackToEarn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BACK TO EARN" />
+
+    <Button
+        android:id="@+id/btnGoHome"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="MAIN MENU"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#2196F3" />
+
+</LinearLayout>

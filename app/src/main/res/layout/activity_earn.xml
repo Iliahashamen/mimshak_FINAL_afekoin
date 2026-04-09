@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Earn Afekoins"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/afeka_green"
+            android:layout_marginBottom="32dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Are you in class right now?"
+                android:textSize="20sp"
+                android:layout_marginBottom="24dp" />
+            <Button android:id="@+id/btnYesInClass" android:layout_width="200dp" android:layout_height="60dp" android:text="YES" android:backgroundTint="@color/afeka_green" android:layout_marginBottom="12dp" />
+            <Button android:id="@+id/btnNoNotInClass" android:layout_width="200dp" android:layout_height="60dp" android:text="NO" android:backgroundTint="#757575" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutEarnButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <Button android:id="@+id/btnAfequiz" android:layout_width="match_parent" android:layout_height="65dp" android:text="AFEQUIZ" android:backgroundTint="@color/afeka_green" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Answer multiple-choice questions correctly to earn points." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+
+            <Button android:id="@+id/btnLiebnitz" android:layout_width="match_parent" android:layout_height="65dp" android:text="LIEBNITZ" android:backgroundTint="@color/afeka_green" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Navigate your spacecraft and escape obstacles in deep space." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+
+            <Button android:id="@+id/btnMine" android:layout_width="match_parent" android:layout_height="65dp" android:text="MINE" android:backgroundTint="@color/afeka_green" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Turn your device into a miner to passively earn coins." android:textColor="#666666" android:layout_marginBottom="16dp" android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvLockMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF5252"
+                android:textStyle="bold|italic"
+                android:gravity="center"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

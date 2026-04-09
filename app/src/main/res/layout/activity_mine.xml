@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvMineStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Prepare to Mine..."
+        android:textColor="#00C853"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/mineProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_centerInParent="true"
+        android:max="600"
+        android:progressDrawable="@drawable/circular_progress_bar" />
+
+    <TextView
+        android:id="@+id/tvMineTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="10:00"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnBoost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mineProgressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-20dp"
+        android:backgroundTint="#FFD700"
+        android:text="BOOST (3x)"
+        android:textColor="#000000"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnStartMine"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnBoost"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#00C853"
+        android:text="START MINING" />
+
+    <Button
+        android:id="@+id/btnCancelMine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="CANCEL SESSION" />
+
+</RelativeLayout>
