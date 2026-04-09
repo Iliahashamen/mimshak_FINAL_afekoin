@@ -45,6 +45,9 @@
             <Button android:id="@+id/btnAfequiz" android:layout_width="match_parent" android:layout_height="65dp" android:text="AFEQUIZ" android:backgroundTint="@color/afeka_green" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Answer multiple-choice questions correctly to earn points." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
 
+            <Button android:id="@+id/btnAfekliker" android:layout_width="match_parent" android:layout_height="65dp" android:text="AFEKLIKER" android:backgroundTint="@color/afeka_green" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tap the Afekoin logo as fast as you can for instant coins." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+
             <Button android:id="@+id/btnLiebnitz" android:layout_width="match_parent" android:layout_height="65dp" android:text="LIEBNITZ" android:backgroundTint="@color/afeka_green" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Navigate your spacecraft and escape obstacles in deep space." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
 

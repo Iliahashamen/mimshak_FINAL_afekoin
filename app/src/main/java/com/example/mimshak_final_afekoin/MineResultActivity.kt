@@ -1,13 +1,15 @@
 package com.example.mimshak_final_afekoin
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.lifecycle.lifecycleScope
+import io.supabase.gotrue.auth
+import io.supabase.postgrest.postgrest
+import kotlinx.coroutines.launch
 
 class MineResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,23 +19,27 @@ class MineResultActivity : AppCompatActivity() {
         val reward = intent.getDoubleExtra("REWARD", 0.0)
         val rewardStr = String.format("%.2f", reward)
 
-        val prefs = getSharedPreferences("AFEKOIN_PREFS", Context.MODE_PRIVATE)
-        val oldBalStr = prefs.getString("BALANCE", "30.00") ?: "30.00"
-        val newBal = oldBalStr.toDouble() + reward
-        val finalBalStr = String.format("%.2f", newBal)
-
-        // Save to History
-        val history = prefs.getString("HISTORY_DATA", "") ?: ""
-        val date = SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(Date())
-        val entry = "Mining Reward|+$rewardStr AFK|$date;"
-
-        prefs.edit()
-            .putString("BALANCE", finalBalStr)
-            .putString("HISTORY_DATA", history + entry)
-            .apply()
-
         findViewById<TextView>(R.id.tvMinedAmount).text = "+$rewardStr AFK"
-        findViewById<TextView>(R.id.tvNewBalance).text = "Balance: $finalBalStr AFK"
+        findViewById<TextView>(R.id.tvNewBalance).text = getString(R.string.syncing_balance)
+
+        lifecycleScope.launch {
+            try {
+                SupabaseWallet.addCredits(reward, "Mining session reward")
+                val user = SupabaseManager.client.auth.currentUserOrNull()
+                val bal = if (user != null) {
+                    SupabaseManager.client.postgrest
+                        .from("profiles")
+                        .select { filter("id", "eq", user.id) }
+                        .decodeSingleOrNull<Profile>()?.balance
+                } else null
+                findViewById<TextView>(R.id.tvNewBalance).text =
+                    if (bal != null) "Balance: ${String.format("%.2f", bal)} AFK"
+                    else getString(R.string.balance_updated_check_home)
+            } catch (e: Exception) {
+                Toast.makeText(this@MineResultActivity, e.message ?: "Save failed", Toast.LENGTH_LONG).show()
+                findViewById<TextView>(R.id.tvNewBalance).text = getString(R.string.balance_updated_check_home)
+            }
+        }
 
         findViewById<Button>(R.id.btnMineAgain).setOnClickListener {
             startActivity(Intent(this, MineActivity::class.java))
@@ -41,10 +47,9 @@ class MineResultActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnGoHome).setOnClickListener {
-            // No intent extra needed here because MainActivity now loads the name from storage
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            })
             finish()
         }
     }

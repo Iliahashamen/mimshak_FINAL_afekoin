@@ -29,9 +29,9 @@ class HistoryAdapter(private val transactions: List<Transaction>) : RecyclerView
     override fun getItemCount() = transactions.size
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvTitle: TextView = itemView.findViewById(R.id.tvTransactionTitle)
-        private val tvAmount: TextView = itemView.findViewById(R.id.tvTransactionAmount)
-        private val tvDate: TextView = itemView.findViewById(R.id.tvTransactionDate)
+        private val tvTitle: TextView = itemView.findViewById(R.id.tvTranTitle)
+        private val tvAmount: TextView = itemView.findViewById(R.id.tvTranAmount)
+        private val tvDate: TextView = itemView.findViewById(R.id.tvTranDate)
 
         fun bind(transaction: Transaction) {
             tvTitle.text = transaction.description
@@ -41,12 +41,23 @@ class HistoryAdapter(private val transactions: List<Transaction>) : RecyclerView
             tvAmount.text = amountText
             tvAmount.setTextColor(if (isPositive) Color.parseColor("#2E7D32") else Color.parseColor("#C62828"))
 
-            // Format the date string
+            tvDate.text = formatCreatedAt(transaction.created_at)
+        }
+    }
+
+    private fun formatCreatedAt(createdAt: String?): String {
+        if (createdAt.isNullOrBlank()) return ""
+        return try {
+            val instant = java.time.Instant.parse(createdAt)
+            val local = java.time.LocalDateTime.ofInstant(instant, java.time.ZoneId.systemDefault())
+            val fmt = java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm", Locale.getDefault())
+            local.format(fmt)
+        } catch (_: Exception) {
             try {
-                val date = supabaseDateFormat.parse(transaction.created_at ?: "")
-                tvDate.text = if (date != null) displayDateFormat.format(date) else ""
-            } catch (e: Exception) {
-                tvDate.text = "" // Clear text on parsing error
+                val date = supabaseDateFormat.parse(createdAt)
+                if (date != null) displayDateFormat.format(date) else createdAt.take(16)
+            } catch (_: Exception) {
+                createdAt.take(16)
             }
         }
     }

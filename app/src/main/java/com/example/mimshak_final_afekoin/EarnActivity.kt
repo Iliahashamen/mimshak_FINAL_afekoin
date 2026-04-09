@@ -19,24 +19,29 @@ class EarnActivity : AppCompatActivity() {
         val layoutQuestion = findViewById<LinearLayout>(R.id.layoutQuestion)
         val layoutEarnButtons = findViewById<LinearLayout>(R.id.layoutEarnButtons)
         val btnAfequiz = findViewById<Button>(R.id.btnAfequiz)
+        val btnAfekliker = findViewById<Button>(R.id.btnAfekliker)
         val btnLiebnitz = findViewById<Button>(R.id.btnLiebnitz)
         val btnMine = findViewById<Button>(R.id.btnMine)
         val tvLockMsg = findViewById<TextView>(R.id.tvLockMessage)
 
+        fun applyClassLock() {
+            val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
+            val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+            if (currentMinute >= 45) return
+            val games = listOf(btnAfequiz, btnAfekliker, btnLiebnitz, btnMine)
+            games.forEach { b ->
+                b.isEnabled = false
+                b.alpha = 0.5f
+            }
+            tvLockMsg.text =
+                "Games stay locked until $hour:45 so you are not distracted in class."
+            tvLockMsg.visibility = View.VISIBLE
+        }
+
         findViewById<Button>(R.id.btnYesInClass).setOnClickListener {
             layoutQuestion.visibility = View.GONE
             layoutEarnButtons.visibility = View.VISIBLE
-
-            // Lock Logic: Locked until hh:45 if in class
-            val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
-            if (currentMinute < 45) {
-                btnAfequiz.isEnabled = false
-                btnAfequiz.alpha = 0.5f
-                btnLiebnitz.isEnabled = false
-                btnLiebnitz.alpha = 0.5f
-                tvLockMsg.text = "Quiz and Leibniz locked until ${Calendar.getInstance().get(Calendar.HOUR_OF_DAY)}:45"
-                tvLockMsg.visibility = View.VISIBLE
-            }
+            applyClassLock()
         }
 
         findViewById<Button>(R.id.btnNoNotInClass).setOnClickListener {
@@ -45,7 +50,8 @@ class EarnActivity : AppCompatActivity() {
         }
 
         btnAfequiz.setOnClickListener { startActivity(Intent(this, AfequizActivity::class.java)) }
+        btnAfekliker.setOnClickListener { startActivity(Intent(this, AfeklikerActivity::class.java)) }
         btnMine.setOnClickListener { startActivity(Intent(this, MineActivity::class.java)) }
-        btnLiebnitz.setOnClickListener { Toast.makeText(this, "Leibniz coming soon!", Toast.LENGTH_SHORT).show() }
+        btnLiebnitz.setOnClickListener { startActivity(Intent(this, LiebnitzActivity::class.java)) }
     }
 }

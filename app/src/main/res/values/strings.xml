@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">mimshak_FINAL_afekoin</string>
+    <string name="app_name">Afekoin</string>
+    <string name="syncing_balance">Syncing balance…</string>
+    <string name="balance_updated_check_home">Reward recorded. Open the main screen to see your balance.</string>
 </resources>

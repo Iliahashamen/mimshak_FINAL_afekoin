@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
 
                 // 2. Create the corresponding profile in the 'profiles' table
                 if (user != null) {
-                    val username = email.substringBefore('@') // Simple username generation
+                    val username = email.substringBefore('@').lowercase()
                     val newProfile = Profile(id = user.id, username = username)
                     
                     SupabaseManager.client.postgrest.from("profiles").upsert(newProfile)

@@ -1,18 +1,20 @@
 package com.example.mimshak_final_afekoin
 
-import android.content.Context
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.supabase.gotrue.auth
+import io.supabase.postgrest.postgrest
+import io.supabase.postgrest.query.Order
+import kotlinx.coroutines.launch
 
 class HistoryActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
@@ -22,30 +24,32 @@ class HistoryActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rvTransactions)
         rv.layoutManager = LinearLayoutManager(this)
 
-        val prefs = getSharedPreferences("AFEKOIN_PREFS", Context.MODE_PRIVATE)
-        val raw = prefs.getString("HISTORY_DATA", "") ?: ""
-        val list = mutableListOf<Transaction>()
-        if (raw.isNotEmpty()) {
-            raw.split(";").filter { it.contains("|") }.forEach {
-                val p = it.split("|")
-                list.add(Transaction(p[0], p[1], p[2], p[1].contains("+")))
+        lifecycleScope.launch {
+            try {
+                val user = SupabaseManager.client.auth.currentUserOrNull()
+                if (user == null) {
+                    startActivity(Intent(this@HistoryActivity, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    finish()
+                    return@launch
+                }
+                val rows = SupabaseManager.client.postgrest
+                    .from("transactions")
+                    .select {
+                        filter("user_id", "eq", user.id)
+                        order("created_at", Order.DESCENDING)
+                    }
+                    .decodeList<Transaction>()
+                rv.adapter = HistoryAdapter(rows)
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@HistoryActivity,
+                    "Could not load history: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+                rv.adapter = HistoryAdapter(emptyList())
             }
         }
-        rv.adapter = HistoryAdapter(list.reversed())
     }
-}
-
-class HistoryAdapter(private val list: List<Transaction>) : RecyclerView.Adapter<HistoryAdapter.VH>() {
-    class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val t: TextView = v.findViewById(R.id.tvTranTitle)
-        val d: TextView = v.findViewById(R.id.tvTranDate)
-        val a: TextView = v.findViewById(R.id.tvTranAmount)
-    }
-    override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(LayoutInflater.from(p.context).inflate(R.layout.item_transaction, p, false))
-    override fun onBindViewHolder(h: VH, p: Int) {
-        val item = list[p]
-        h.t.text = item.title; h.d.text = item.date; h.a.text = item.amount
-        h.a.setTextColor(if (item.isPositive) Color.parseColor("#008542") else Color.RED)
-    }
-    override fun getItemCount() = list.size
 }

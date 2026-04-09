@@ -8,6 +8,7 @@ import io.supabase.realtime.Realtime
 
 object SupabaseManager {
 
+    // Slides reference Firebase-style auth; this app uses Supabase Auth + PostgREST (same “BaaS” idea for a course demo).
     private const val SUPABASE_URL = "https://your-project-id.supabase.co" // IMPORTANT: Replace with your actual Supabase URL
     private const val SUPABASE_KEY = "your-anon-key" // IMPORTANT: Replace with your actual Supabase anon key
 

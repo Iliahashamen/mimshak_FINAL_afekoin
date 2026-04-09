@@ -105,11 +105,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnPay).setOnClickListener {
-            Toast.makeText(this, "Pay coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PayActivity::class.java))
         }
-        
+
         findViewById<Button>(R.id.btnTransfer).setOnClickListener {
-            Toast.makeText(this, "Transfer coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, TransferActivity::class.java))
         }
     }
 
