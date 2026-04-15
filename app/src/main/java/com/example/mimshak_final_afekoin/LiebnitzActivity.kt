@@ -18,29 +18,50 @@ class LiebnitzActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liebnitz)
 
-        val gameView = findViewById<LiebnitzGameView>(R.id.liebnitzGameView)
-        val tvScore = findViewById<TextView>(R.id.tvLiebnitzScore)
+        val gameView  = findViewById<LiebnitzGameView>(R.id.liebnitzGameView)
+        val tvScore   = findViewById<TextView>(R.id.tvLiebnitzScore)
+        val tvEquation = findViewById<TextView>(R.id.tvEquation)
 
-        gameView.onScoreChanged = { s -> tvScore.text = "Score: $s" }
+        gameView.onScoreChanged = { score, equation ->
+            runOnUiThread {
+                tvScore.text = "Score: $score"
+                if (equation.isNotBlank()) tvEquation.text = equation
+            }
+        }
 
         gameView.onCrash = callback@{ finalScore ->
             if (rewarded) return@callback
             rewarded = true
-            val reward = min(3.0, finalScore * 0.05)
+
+            val reward = min(5.0, finalScore * 0.1)
+
+            runOnUiThread {
+                tvEquation.text = "CRASH!"
+                tvEquation.setTextColor(getColor(R.color.accent_red))
+            }
+
             lifecycleScope.launch {
                 try {
                     if (reward > 0) {
-                        FirebaseWallet.addCredits(reward, "Liebnitz run (score $finalScore)")
+                        FirebaseWallet.addCredits(reward, "Liebnitz — $finalScore correct answers")
                         Toast.makeText(
                             this@LiebnitzActivity,
-                            "Run complete! +${String.format("%.2f", reward)} AFK",
+                            "Run over! +${String.format("%.2f", reward)} AFK (score $finalScore)",
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
-                        Toast.makeText(this@LiebnitzActivity, "Keep practicing!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LiebnitzActivity,
+                            "No coins — answer at least one correctly next time!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@LiebnitzActivity, e.message ?: "Could not save reward", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@LiebnitzActivity,
+                        e.message ?: "Could not save reward",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 finish()
             }

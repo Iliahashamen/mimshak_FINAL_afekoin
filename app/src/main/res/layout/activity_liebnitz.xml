@@ -17,14 +17,16 @@
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:paddingTop="24dp"
-        android:paddingBottom="12dp"
-        android:background="#88000000">
+        android:paddingBottom="16dp"
+        android:background="#CC0D1117">
 
+        <!-- Score row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/tvLiebnitzScore"
@@ -33,13 +35,13 @@
                 android:layout_weight="1"
                 android:text="Score: 0"
                 android:textColor="@color/white"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnLiebnitzExit"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
+                android:layout_height="34dp"
                 android:text="Exit"
                 android:textSize="12sp"
                 android:backgroundTint="@color/bg_card"
@@ -47,13 +49,26 @@
                 app:cornerRadius="10dp" />
         </LinearLayout>
 
+        <!-- Equation display -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvEquation"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Tap left / right half to switch lanes"
-            android:textColor="#AAFFFFFF"
-            android:textSize="12sp" />
+            android:text="Get ready…"
+            android:textColor="@color/accent_green"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:letterSpacing="0.05" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fly into the correct answer!"
+            android:textColor="#88FFFFFF"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 
 </FrameLayout>
