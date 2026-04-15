@@ -27,7 +27,8 @@ object FirebaseWallet {
 
     suspend fun addCredits(amount: Double, description: String) {
         require(amount > 0)
-        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Please sign in to save your earnings.")
         val ref = db.collection(FirestorePaths.USERS).document(uid)
         db.runTransaction { tx ->
             val snap = tx.get(ref)
@@ -39,7 +40,8 @@ object FirebaseWallet {
 
     suspend fun charge(amount: Double, description: String) {
         require(amount > 0)
-        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Please sign in to make payments.")
         val ref = db.collection(FirestorePaths.USERS).document(uid)
         db.runTransaction { tx ->
             val snap = tx.get(ref)
@@ -83,7 +85,8 @@ object FirebaseWallet {
 
     suspend fun transferToUsername(recipientUsername: String, amount: Double) {
         require(amount > 0)
-        val uid = auth.currentUser?.uid ?: error("Not signed in")
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Please sign in to transfer coins.")
         val senderRef = db.collection(FirestorePaths.USERS).document(uid)
 
         val key = recipientUsername.trim().lowercase()

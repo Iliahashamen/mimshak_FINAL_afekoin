@@ -31,8 +31,8 @@ class AfeklikerActivity : AppCompatActivity() {
         val btnLogo = findViewById<ImageButton>(R.id.btnAfekoinLogo)
         val progressBar = findViewById<ProgressBar>(R.id.timerProgress)
 
-        progressBar.max = 20
-        progressBar.progress = 20
+        progressBar.max = 10
+        progressBar.progress = 10
 
         btnLogo.setOnClickListener {
             if (claimed) return@setOnClickListener
@@ -41,15 +41,15 @@ class AfeklikerActivity : AppCompatActivity() {
             animateTap(btnLogo)
         }
 
-        timer = object : CountDownTimer(20_000L, 250L) {
+        timer = object : CountDownTimer(10_000L, 250L) {
             override fun onTick(millisUntilFinished: Long) {
                 if (claimed) return
                 val s = (millisUntilFinished + 999) / 1000
                 tvTimer.text = "0:${s.toString().padStart(2, '0')}"
                 progressBar.progress = s.toInt()
 
-                // Turn timer red in last 5 seconds
-                if (s <= 5) {
+                // Turn timer red in last 3 seconds
+                if (s <= 3) {
                     tvTimer.setTextColor(getColor(R.color.accent_red))
                     progressBar.progressTintList = android.content.res.ColorStateList.valueOf(
                         getColor(R.color.accent_red)

@@ -8,7 +8,7 @@ import android.content.Context
  */
 object DevLogin {
 
-    const val ENABLED = true
+    const val ENABLED = false
 
     /** שם שיוצג במסך הראשי אחרי “התחברות” במצב dev */
     const val DISPLAY_USERNAME = "userevich"
