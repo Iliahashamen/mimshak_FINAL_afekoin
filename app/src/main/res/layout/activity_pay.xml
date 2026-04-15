@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Spend your Afekoins on campus items"
+            android:text="Spend your campus coins on Afeka items"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="28dp" />

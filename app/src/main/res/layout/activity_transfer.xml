@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send Afekoins to another student"
+            android:text="Send coins directly to another student"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="32dp" />

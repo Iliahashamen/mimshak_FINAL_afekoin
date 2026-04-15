@@ -10,16 +10,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 /**
- * Login / Sign-up screen.
- * Firebase Authentication (email + password) — server component #1.
- * Features: persistent "Remember me" (saves email to SharedPreferences),
- *           "Forgot password" (sends a Firebase reset email).
+ * Login screen (existing users only).
+ * New users tap CREATE ACCOUNT to go to SignUpActivity where they pick a username.
  */
 class LoginActivity : AppCompatActivity() {
 
@@ -29,8 +26,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var checkRememberMe: CheckBox
-    private lateinit var signUpButton: Button
     private lateinit var loginButton: Button
+    private lateinit var signUpButton: Button
     private lateinit var tvForgotPassword: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,17 +37,17 @@ class LoginActivity : AppCompatActivity() {
         emailEditText    = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         checkRememberMe  = findViewById(R.id.checkRememberMe)
-        signUpButton     = findViewById(R.id.signUpButton)
         loginButton      = findViewById(R.id.loginButton)
+        signUpButton     = findViewById(R.id.signUpButton)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
-        // Auto-navigate if already logged in
-        if (auth.currentUser != null || DevLogin.isDevSession(this)) {
+        // Auto-navigate if already signed in
+        if (auth.currentUser != null) {
             navigateToMain()
             return
         }
 
-        // Pre-fill email if "Remember me" was checked last time
+        // Pre-fill remembered email
         val savedEmail = prefs.getString(KEY_EMAIL, null)
         if (!savedEmail.isNullOrBlank()) {
             emailEditText.setText(savedEmail)
@@ -58,49 +55,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         loginButton.setOnClickListener { handleLogin() }
-        signUpButton.setOnClickListener { handleSignUp() }
+
+        // Open the dedicated sign-up screen
+        signUpButton.setOnClickListener {
+            startActivity(Intent(this, SignUpActivity::class.java))
+        }
+
         tvForgotPassword.setOnClickListener { handleForgotPassword() }
     }
-
-    // ── Sign-up ──────────────────────────────────────────────────────────────
-
-    private fun handleSignUp() {
-        val email    = emailEditText.text.toString().trim()
-        val password = passwordEditText.text.toString()
-
-        if (email.isBlank() || password.isBlank()) {
-            Toast.makeText(this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (DevLogin.ENABLED) {
-            DevLogin.startDevSession(this)
-            saveRememberMe(email)
-            Toast.makeText(this, "Dev login — hello ${DevLogin.DISPLAY_USERNAME}", Toast.LENGTH_SHORT).show()
-            navigateToMain()
-            return
-        }
-
-        loginButton.isEnabled  = false
-        signUpButton.isEnabled = false
-
-        lifecycleScope.launch {
-            try {
-                val result = auth.createUserWithEmailAndPassword(email, password).await()
-                val username = email.substringBefore('@').lowercase()
-                UserRepository.createUserDocument(result.user!!.uid, username)
-                saveRememberMe(email)
-                Toast.makeText(this@LoginActivity, "Welcome to Afekoin, $username!", Toast.LENGTH_SHORT).show()
-                navigateToMain()
-            } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Sign-up failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                loginButton.isEnabled  = true
-                signUpButton.isEnabled = true
-            }
-        }
-    }
-
-    // ── Login ────────────────────────────────────────────────────────────────
 
     private fun handleLogin() {
         val email    = emailEditText.text.toString().trim()
@@ -111,15 +73,8 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        if (DevLogin.ENABLED) {
-            DevLogin.startDevSession(this)
-            saveRememberMe(email)
-            navigateToMain()
-            return
-        }
-
         loginButton.isEnabled  = false
-        signUpButton.isEnabled = false
+        loginButton.text = "Signing in…"
 
         lifecycleScope.launch {
             try {
@@ -127,23 +82,23 @@ class LoginActivity : AppCompatActivity() {
                 saveRememberMe(email)
                 navigateToMain()
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                loginButton.isEnabled  = true
-                signUpButton.isEnabled = true
+                Toast.makeText(
+                    this@LoginActivity,
+                    "Login failed: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                loginButton.isEnabled = true
+                loginButton.text = "LOG IN"
             }
         }
     }
 
-    // ── Forgot password ──────────────────────────────────────────────────────
-
     private fun handleForgotPassword() {
         val email = emailEditText.text.toString().trim()
-
         if (email.isBlank()) {
             Toast.makeText(this, "Enter your email first, then tap Forgot password", Toast.LENGTH_SHORT).show()
             return
         }
-
         lifecycleScope.launch {
             try {
                 auth.sendPasswordResetEmail(email).await()
@@ -153,21 +108,18 @@ class LoginActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Could not send reset email: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@LoginActivity,
+                    "Could not send reset email: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
-    /** Saves or clears the remembered email based on the checkbox state. */
     private fun saveRememberMe(email: String) {
         prefs.edit().apply {
-            if (checkRememberMe.isChecked) {
-                putString(KEY_EMAIL, email)
-            } else {
-                remove(KEY_EMAIL)
-            }
+            if (checkRememberMe.isChecked) putString(KEY_EMAIL, email) else remove(KEY_EMAIL)
             apply()
         }
     }

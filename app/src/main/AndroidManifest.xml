@@ -27,6 +27,7 @@
         <activity android:name="com.example.mimshak_final_afekoin.AfequizActivity" android:exported="false" />
         <activity android:name="com.example.mimshak_final_afekoin.QuizResultActivity" android:exported="false" />
         <activity android:name="com.example.mimshak_final_afekoin.LeaderboardActivity" android:exported="false" />
+        <activity android:name="com.example.mimshak_final_afekoin.SignUpActivity" android:exported="false" />
         <activity android:name="com.example.mimshak_final_afekoin.TransferActivity" android:exported="false" />
         <activity android:name="com.example.mimshak_final_afekoin.PayActivity" android:exported="false" />
         <activity android:name="com.example.mimshak_final_afekoin.AfeklikerActivity" android:exported="false" />

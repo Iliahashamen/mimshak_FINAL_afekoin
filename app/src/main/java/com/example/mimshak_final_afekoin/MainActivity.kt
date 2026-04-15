@@ -167,10 +167,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
 
-        findViewById<Button>(R.id.btnLeaderboard).setOnClickListener {
-            startActivity(Intent(this, LeaderboardActivity::class.java))
-        }
-
         findViewById<Button>(R.id.btnPay).setOnClickListener {
             startActivity(Intent(this, PayActivity::class.java))
         }

@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Afeka Campus Wallet"
+                android:text="Afeka Campus Coin"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginTop="2dp" />
@@ -152,79 +152,61 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Action grid -->
-    <GridLayout
+    <!-- Action buttons: EARN full-width on top, PAY + TRANSFER side by side below -->
+    <Button
+        android:id="@+id/btnEarn"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:columnCount="2"
-        android:rowCount="2"
-        android:useDefaultMargins="false"
+        android:text="EARN COINS"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/bg_primary"
+        android:backgroundTint="@color/accent_green"
+        app:cornerRadius="20dp"
         app:layout_constraintTop_toBottomOf="@id/balanceCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnPay"
+        app:layout_constraintVertical_weight="1.4" />
+
+    <Button
+        android:id="@+id/btnPay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp"
+        android:text="PAY"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/accent_red"
+        app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/btnTransfer"
+        app:layout_constraintTop_toBottomOf="@id/btnEarn"
+        app:layout_constraintVertical_weight="1" />
 
-        <Button
-            android:id="@+id/btnPay"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="6dp"
-            android:text="PAY"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/accent_red"
-            app:cornerRadius="18dp"
-            android:drawableTop="@android:drawable/ic_media_play"
-            android:drawablePadding="6dp" />
-
-        <Button
-            android:id="@+id/btnEarn"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="6dp"
-            android:text="EARN"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/bg_primary"
-            android:backgroundTint="@color/accent_green"
-            app:cornerRadius="18dp" />
-
-        <Button
-            android:id="@+id/btnTransfer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="6dp"
-            android:text="TRANSFER"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/accent_purple"
-            app:cornerRadius="18dp" />
-
-        <Button
-            android:id="@+id/btnLeaderboard"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="6dp"
-            android:text="RANKS"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/bg_primary"
-            android:backgroundTint="@color/accent_gold"
-            app:cornerRadius="18dp" />
-
-    </GridLayout>
+    <Button
+        android:id="@+id/btnTransfer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="TRANSFER"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/accent_purple"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnPay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnEarn"
+        app:layout_constraintVertical_weight="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
