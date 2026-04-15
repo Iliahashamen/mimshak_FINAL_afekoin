@@ -8,17 +8,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.mimshak_final_afekoin.data.Profile
+import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 /**
- * מסך ראשי: מציג פרופיל מ-Firestore, איזון, ואפשרות להעלאת תמונת פרופיל ל-Storage.
+ * Main screen: loads user profile from Firestore, shows balance, handles
+ * profile photo upload (Firebase Storage), daily bonus, and sign-out.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -54,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         ivProfileAvatar = findViewById(R.id.ivProfileAvatar)
 
         ivProfileAvatar.setOnClickListener {
+            if (DevLogin.isDevSession(this)) {
+                Toast.makeText(this, "Profile photo upload is off in dev mode", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             pickImage.launch("image/*")
         }
 
@@ -68,17 +75,26 @@ class MainActivity : AppCompatActivity() {
     private fun fetchUserProfile() {
         lifecycleScope.launch {
             try {
+                if (DevLogin.isDevSession(this@MainActivity)) {
+                    currentUserProfile = Profile(
+                        id = "dev_local",
+                        username = DevLogin.DISPLAY_USERNAME,
+                        balance = 30.0,
+                        photoUrl = null,
+                    )
+                    updateUI()
+                    ivProfileAvatar.setImageResource(R.mipmap.afekoin_logo)
+                    return@launch
+                }
+
                 val user = auth.currentUser
                 if (user == null) {
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
+                    goToLogin()
                     return@launch
                 }
 
                 var profile = UserRepository.getProfile(user.uid)
                 if (profile == null && user.email != null) {
-                    // שחזור: משתמש ב-Auth בלי מסמך Firestore (למשל אחרי מעבר ממערכת אחרת)
                     val uname = user.email!!.substringBefore('@').lowercase()
                     UserRepository.createUserDocument(user.uid, uname)
                     profile = UserRepository.getProfile(user.uid)
@@ -86,12 +102,32 @@ class MainActivity : AppCompatActivity() {
                 if (profile != null) {
                     currentUserProfile = profile
                     updateUI()
+                    checkDailyBonus()
                 } else {
                     Toast.makeText(this@MainActivity, "Could not load user profile.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private suspend fun checkDailyBonus() {
+        try {
+            val granted = FirebaseWallet.checkAndGrantDailyBonus()
+            if (granted) {
+                // Reload balance after bonus
+                val user = auth.currentUser ?: return
+                currentUserProfile = UserRepository.getProfile(user.uid) ?: currentUserProfile
+                updateUI()
+                Toast.makeText(
+                    this,
+                    "Daily bonus: +5.00 AFK",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        } catch (_: Exception) {
+            // Bonus check failure is non-critical, silently ignore
         }
     }
 
@@ -112,8 +148,7 @@ class MainActivity : AppCompatActivity() {
             tvBalance.text = "••••"
             btnEye.setImageResource(R.drawable.ic_visibility_off)
         } else {
-            val formattedBalance = String.format("%.2f", currentUserProfile?.balance ?: 0.0)
-            tvBalance.text = formattedBalance
+            tvBalance.text = String.format("%.2f", currentUserProfile?.balance ?: 0.0)
             btnEye.setImageResource(R.drawable.ic_visibility)
         }
     }
@@ -143,6 +178,32 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnTransfer).setOnClickListener {
             startActivity(Intent(this, TransferActivity::class.java))
         }
+
+        findViewById<ImageButton>(R.id.btnSignOut).setOnClickListener {
+            confirmSignOut()
+        }
+    }
+
+    private fun confirmSignOut() {
+        AlertDialog.Builder(this)
+            .setTitle("Sign out")
+            .setMessage("Are you sure you want to sign out?")
+            .setPositiveButton("Sign out") { _, _ ->
+                if (DevLogin.isDevSession(this)) {
+                    DevLogin.clearDevSession(this)
+                } else {
+                    auth.signOut()
+                }
+                goToLogin()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun goToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 
     private fun getGreetingPrefix(): String {

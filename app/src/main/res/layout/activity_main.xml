@@ -4,74 +4,111 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/bg_primary">
 
-    <View
-        android:id="@+id/header"
+    <!-- Top bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:background="@color/afeka_green"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvGreeting"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_margin="24dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Afeka Campus Wallet"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnSignOut"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_earn_card"
+            android:src="@drawable/ic_history"
+            android:rotation="180"
+            android:padding="6dp"
+            android:contentDescription="Sign out"
+            app:tint="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- Balance card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/balanceCard"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
         app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tvGreeting"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.05">
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#00000000"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_gradient_bg"
-            android:padding="32dp">
+            android:padding="28dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Available Balance"
-                    android:textColor="#CCFFFFFF"
-                    android:textSize="14sp" />
+                    android:textColor="#AAFFFFFF"
+                    android:textSize="13sp" />
+
                 <ImageButton
                     android:id="@+id/btnHideBalance"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_visibility"
                     app:tint="@color/white" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="16dp">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardCornerRadius="24dp">
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    app:cardCornerRadius="26dp"
+                    app:cardBackgroundColor="#1A4D2E">
                     <ImageView
                         android:id="@+id/ivProfileAvatar"
                         android:layout_width="match_parent"
@@ -85,15 +122,14 @@
 
                 <TextView
                     android:id="@+id/tvBalance"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="30.00"
-                    android:textSize="44sp"
+                    android:textSize="42sp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:layout_marginStart="12dp"/>
-
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                    android:layout_marginStart="14dp" />
 
                 <ImageButton
                     android:id="@+id/btnHistory"
@@ -103,62 +139,92 @@
                     android:src="@drawable/ic_history"
                     app:tint="@color/white" />
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AFK"
+                android:textColor="#80FFFFFF"
+                android:textSize="13sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="66dp" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Action grid -->
+    <GridLayout
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:paddingHorizontal="32dp"
-        android:paddingTop="24dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:useDefaultMargins="false"
         app:layout_constraintTop_toBottomOf="@id/balanceCard"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/btnPay"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="6dp"
             android:text="PAY"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:backgroundTint="#FF5252"
-            android:layout_marginBottom="16dp"
-            app:cornerRadius="16dp" />
+            android:textColor="@color/white"
+            android:backgroundTint="@color/accent_red"
+            app:cornerRadius="18dp"
+            android:drawableTop="@android:drawable/ic_media_play"
+            android:drawablePadding="6dp" />
 
         <Button
             android:id="@+id/btnEarn"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="0.8"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="6dp"
             android:text="EARN"
             android:textSize="18sp"
-            android:backgroundTint="@color/afeka_green"
-            android:layout_marginBottom="16dp"
-            app:cornerRadius="16dp" />
+            android:textStyle="bold"
+            android:textColor="@color/bg_primary"
+            android:backgroundTint="@color/accent_green"
+            app:cornerRadius="18dp" />
 
         <Button
             android:id="@+id/btnTransfer"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="0.8"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="6dp"
             android:text="TRANSFER"
-            android:textSize="18sp"
-            android:backgroundTint="#7B1FA2"
-            android:layout_marginBottom="16dp"
-            app:cornerRadius="16dp" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/accent_purple"
+            app:cornerRadius="18dp" />
 
         <Button
             android:id="@+id/btnLeaderboard"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="0.8"
-            android:text="LEADERBOARD"
-            android:textSize="18sp"
-            android:backgroundTint="#FFA000"
-            app:cornerRadius="16dp" />
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="6dp"
+            android:text="RANKS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/bg_primary"
+            android:backgroundTint="@color/accent_gold"
+            app:cornerRadius="18dp" />
 
-    </LinearLayout>
+    </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

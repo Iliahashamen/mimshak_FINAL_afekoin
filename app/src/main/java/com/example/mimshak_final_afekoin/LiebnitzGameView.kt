@@ -1,10 +1,13 @@
 package com.example.mimshak_final_afekoin
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -16,11 +19,29 @@ class LiebnitzGameView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private val paintPlayer = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#7CB342") }
-    private val paintObstacle = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#E53935") }
-    private val paintLane = Paint().apply { color = Color.parseColor("#22303C") }
-    private val paintDivider =
-        Paint().apply { color = Color.parseColor("#384D5C"); strokeWidth = 4f }
+    private val paintPlayer = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#00C853")
+    }
+    private val paintPlayerGlow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#6600C853")
+        maskFilter = BlurMaskFilter(32f, BlurMaskFilter.Blur.NORMAL)
+    }
+    private val paintObstacle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#FF453A")
+    }
+    private val paintObstacleGlow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#66FF453A")
+        maskFilter = BlurMaskFilter(20f, BlurMaskFilter.Blur.NORMAL)
+    }
+    private val paintLane = Paint().apply { color = Color.parseColor("#0D1117") }
+    private val paintDivider = Paint().apply {
+        color = Color.parseColor("#21262D")
+        strokeWidth = 2f
+    }
+    private val paintStars = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        alpha = 120
+    }
 
     private var running = true
     private var playerLane = 1
@@ -28,10 +49,15 @@ class LiebnitzGameView @JvmOverloads constructor(
     private val obstacles = mutableListOf<Obstacle>()
     private var tickCount = 0
 
+    // Stars for background parallax
+    private val stars = mutableListOf<Star>()
+    private var starsInitialized = false
+
     var onScoreChanged: ((Int) -> Unit)? = null
     var onCrash: ((Int) -> Unit)? = null
 
     private data class Obstacle(val lane: Int, var y: Float, val speed: Float)
+    private data class Star(var x: Float, var y: Float, val radius: Float, val speed: Float)
 
     private val loop = object : Runnable {
         override fun run() {
@@ -53,11 +79,36 @@ class LiebnitzGameView @JvmOverloads constructor(
         running = false
     }
 
+    private fun initStars() {
+        if (starsInitialized || width == 0) return
+        repeat(60) {
+            stars.add(
+                Star(
+                    Random.nextFloat() * width,
+                    Random.nextFloat() * height,
+                    Random.nextFloat() * 2f + 0.5f,
+                    Random.nextFloat() * 2f + 1f
+                )
+            )
+        }
+        starsInitialized = true
+    }
+
     private fun tick() {
+        initStars()
         val h = height.toFloat()
         val w = width.toFloat()
         val laneW = w / 3f
-        val speedBase = min(14f, h * 0.006f)
+
+        // Speed ramp: increases every 10 points, capped at 2.5x
+        val speedMultiplier = 1f + (scoreInt / 10f) * 0.15f
+        val speedBase = min(14f, h * 0.006f) * speedMultiplier.coerceAtMost(2.5f)
+
+        // Move stars (parallax)
+        stars.forEach { s ->
+            s.y += s.speed * speedMultiplier.coerceAtMost(2f) * 0.5f
+            if (s.y > h) s.y = -4f
+        }
 
         obstacles.forEach { it.y += it.speed * speedBase }
 
@@ -70,9 +121,11 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
 
         tickCount++
-        if (tickCount % 38 == 0) {
+        // Spawn rate increases with score
+        val spawnInterval = (38 - scoreInt / 5).coerceAtLeast(18)
+        if (tickCount % spawnInterval == 0) {
             val lane = Random.nextInt(0, 3)
-            obstacles.add(Obstacle(lane, -80f, Random.nextDouble(0.9, 1.25).toFloat()))
+            obstacles.add(Obstacle(lane, -80f, Random.nextDouble(0.9, 1.3).toFloat()))
         }
 
         val playerTop = h * 0.78f
@@ -113,24 +166,30 @@ class LiebnitzGameView @JvmOverloads constructor(
         val h = height.toFloat()
         val laneW = w / 3f
 
+        // Background
         canvas.drawRect(0f, 0f, w, h, paintLane)
+
+        // Stars
+        stars.forEach { s -> canvas.drawCircle(s.x, s.y, s.radius, paintStars) }
+
+        // Lane dividers
         for (i in 1 until 3) {
             canvas.drawLine(laneW * i, 0f, laneW * i, h, paintDivider)
         }
 
+        // Player glow + body
         val px = laneW * playerLane + laneW * 0.2f
         val playerTop = h * 0.78f
-        canvas.drawRoundRect(
-            RectF(px, playerTop, px + laneW * 0.6f, h * 0.92f),
-            16f, 16f, paintPlayer
-        )
+        val playerRect = RectF(px, playerTop, px + laneW * 0.6f, h * 0.92f)
+        canvas.drawRoundRect(playerRect, 16f, 16f, paintPlayerGlow)
+        canvas.drawRoundRect(playerRect, 16f, 16f, paintPlayer)
 
+        // Obstacles glow + body
         for (o in obstacles) {
             val ox = laneW * o.lane + laneW * 0.15f
-            canvas.drawRoundRect(
-                RectF(ox, o.y, ox + laneW * 0.7f, o.y + h * 0.07f),
-                8f, 8f, paintObstacle
-            )
+            val obsRect = RectF(ox, o.y, ox + laneW * 0.7f, o.y + h * 0.07f)
+            canvas.drawRoundRect(obsRect, 8f, 8f, paintObstacleGlow)
+            canvas.drawRoundRect(obsRect, 8f, 8f, paintObstacle)
         }
     }
 
@@ -140,6 +199,8 @@ class LiebnitzGameView @JvmOverloads constructor(
         playerLane = 1
         tickCount = 0
         running = true
+        starsInitialized = false
+        stars.clear()
         onScoreChanged?.invoke(0)
         removeCallbacks(loop)
         post(loop)

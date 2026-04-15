@@ -2,45 +2,57 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#101820">
+    android:background="@color/bg_primary">
 
     <com.example.mimshak_final_afekoin.LiebnitzGameView
         android:id="@+id/liebnitzGameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- HUD overlay -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#66000000">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        android:background="#88000000">
 
-        <TextView
-            android:id="@+id/tvLiebnitzScore"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Score: 0"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvLiebnitzScore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Score: 0"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnLiebnitzExit"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Exit"
+                android:textSize="12sp"
+                android:backgroundTint="@color/bg_card"
+                android:textColor="@color/text_secondary"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Tap left or right half of the screen to switch lanes. Avoid the red blocks."
-            android:textColor="#DDFFFFFF"
+            android:text="Tap left / right half to switch lanes"
+            android:textColor="#AAFFFFFF"
             android:textSize="12sp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnLiebnitzExit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:text="Exit"
-        android:backgroundTint="@color/afeka_green" />
 
 </FrameLayout>

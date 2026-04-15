@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/bg_primary">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="4dp"
-        android:padding="12dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="20dp">
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_earn_card"
             android:src="@drawable/ic_history"
             android:rotation="180"
+            android:padding="6dp"
             android:contentDescription="Back to Wallet"
-            android:tint="@color/afeka_green" />
+            app:tint="@color/text_secondary" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_weight="1"
             android:text="Transaction History"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/afeka_green" />
-    </RelativeLayout>
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTransactions"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="8dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false" />
+
 </LinearLayout>

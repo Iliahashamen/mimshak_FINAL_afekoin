@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="afeka_green">#008542</color> <color name="white">#FFFFFF</color>
-    <color name="light_gray">#F5F5F5</color>
-    <color name="dark_text">#212121</color>
+    <!-- Dark fintech palette -->
+    <color name="bg_primary">#0D1117</color>
+    <color name="bg_surface">#161B22</color>
+    <color name="bg_card">#1C2128</color>
+    <color name="accent_green">#00C853</color>
+    <color name="accent_green_dim">#1B5E20</color>
+    <color name="accent_red">#FF453A</color>
+    <color name="accent_purple">#BF5AF2</color>
+    <color name="accent_gold">#FFD60A</color>
+    <color name="accent_blue">#0A84FF</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8B949E</color>
+    <color name="divider">#21262D</color>
+    <!-- Legacy aliases kept for compatibility -->
+    <color name="afeka_green">#00C853</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#8B949E</color>
+    <color name="dark_text">#FFFFFF</color>
 </resources>

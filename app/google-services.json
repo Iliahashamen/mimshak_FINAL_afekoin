@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID",
-    "storage_bucket": "REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID.appspot.com"
+    "project_number": "138793585195",
+    "project_id": "afekoin",
+    "storage_bucket": "afekoin.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:138793585195:android:a4e76d3bc480f8f544786e",
         "android_client_info": {
           "package_name": "com.example.mimshak_final_afekoin"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "REPLACE_WITH_KEY_FROM_FIREBASE_CONSOLE"
+          "current_key": "AIzaSyAOIiiHmGCPurSWOlEcspqR5Q_Q9xDNWxw"
         }
       ],
       "services": {

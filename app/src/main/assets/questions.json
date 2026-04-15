@@ -298,5 +298,80 @@
     "text": "איזה סוג דם נחשב ל'תורם אוניברסלי'?",
     "options": ["AB+", "O-", "A+", "B-"],
     "correctAnswer": "O-"
+  },
+  {
+    "text": "מהו Activity ב-Android?",
+    "options": ["שירות רקע", "מסך אחד עם ממשק משתמש", "מסד נתונים מקומי", "תוסף ל-Gradle"],
+    "correctAnswer": "מסך אחד עם ממשק משתמש"
+  },
+  {
+    "text": "מה מייצר ה-Intent ב-Android?",
+    "options": ["חיבור לאינטרנט", "הודעה להפעלת קומפוננטה כמו Activity", "קובץ XML", "ניהול זיכרון"],
+    "correctAnswer": "הודעה להפעלת קומפוננטה כמו Activity"
+  },
+  {
+    "text": "מהי שיטת מחזור חיים הנקראת ראשונה ב-Activity?",
+    "options": ["onStart()", "onResume()", "onCreate()", "onPause()"],
+    "correctAnswer": "onCreate()"
+  },
+  {
+    "text": "מה תפקידו של ה-RecyclerView ב-Android?",
+    "options": ["ניקוי זיכרון", "הצגת רשימות גדולות ביעילות", "ניהול הרשאות", "טעינת תמונות"],
+    "correctAnswer": "הצגת רשימות גדולות ביעילות"
+  },
+  {
+    "text": "ב-Kotlin, מה ההבדל בין val ל-var?",
+    "options": ["אין הבדל", "val קבוע (immutable), var ניתן לשינוי", "var מהיר יותר", "val רק למחרוזות"],
+    "correctAnswer": "val קבוע (immutable), var ניתן לשינוי"
+  },
+  {
+    "text": "מה מאפשרת הפונקציה let ב-Kotlin?",
+    "options": ["הגדרת לולאה", "פעולה על אובייקט לא-null ברמת בטיחות", "ביצוע חישוב מתמטי", "המרת רשימה"],
+    "correctAnswer": "פעולה על אובייקט לא-null ברמת בטיחות"
+  },
+  {
+    "text": "מה מייצג Coroutine ב-Kotlin?",
+    "options": ["כלי לעיצוב UI", "תבנית לביצוע קוד אסינכרוני", "סוג של Array", "מחלקה מופשטת"],
+    "correctAnswer": "תבנית לביצוע קוד אסינכרוני"
+  },
+  {
+    "text": "מה שומר Firebase Firestore?",
+    "options": ["קבצי וידאו בלבד", "מסמכי JSON מובנים בזמן אמת", "תמונות גולמיות", "קוד Java"],
+    "correctAnswer": "מסמכי JSON מובנים בזמן אמת"
+  },
+  {
+    "text": "מהי SharedPreferences ב-Android?",
+    "options": ["חיבור לענן", "מנגנון לשמירת נתונים קטנים מקומית", "מנהל הרשאות", "ספרייה לאנימציות"],
+    "correctAnswer": "מנגנון לשמירת נתונים קטנים מקומית"
+  },
+  {
+    "text": "מה עושה אנוטציית @Composable ב-Jetpack Compose?",
+    "options": ["מסמנת פונקציית UI הניתנת לעיבוד", "מגדירה מסד נתונים", "קוראת ל-Activity", "שולחת בקשת רשת"],
+    "correctAnswer": "מסמנת פונקציית UI הניתנת לעיבוד"
+  },
+  {
+    "text": "ב-Android, מה ה-ViewModel מגן עליו?",
+    "options": ["קריסות מאנימציות", "שמירת נתוני UI בזמן שינוי קונפיגורציה", "חיבורי Bluetooth", "רזולוציית המסך"],
+    "correctAnswer": "שמירת נתוני UI בזמן שינוי קונפיגורציה"
+  },
+  {
+    "text": "מהו APK ב-Android?",
+    "options": ["פרוטוקול רשת", "קובץ החבילה להתקנת אפליקציה", "סוג מסד נתונים", "כלי Debug"],
+    "correctAnswer": "קובץ החבילה להתקנת אפליקציה"
+  },
+  {
+    "text": "מה תפקיד ה-AndroidManifest.xml?",
+    "options": ["עיצוב הממשק", "הגדרת מבנה האפליקציה, הרשאות ורכיבים", "שמירת תמונות", "ניהול Gradle"],
+    "correctAnswer": "הגדרת מבנה האפליקציה, הרשאות ורכיבים"
+  },
+  {
+    "text": "מהו ה-LiveData ב-Android Architecture Components?",
+    "options": ["רשימה סטטית", "מחזיק נתונים עם מודעות למחזור חיים", "אנימציה מובנית", "ממשק HTTP"],
+    "correctAnswer": "מחזיק נתונים עם מודעות למחזור חיים"
+  },
+  {
+    "text": "כיצד ניתן להציג Toast ב-Android?",
+    "options": ["Toast.show(context, text)", "Toast.makeText(context, text, duration).show()", "showToast(text)", "context.toast(text)"],
+    "correctAnswer": "Toast.makeText(context, text, duration).show()"
   }
 ]

@@ -52,6 +52,35 @@ object FirebaseWallet {
         logTransaction(uid, description, -amount)
     }
 
+    /**
+     * Daily login bonus: adds 5 AFK once per calendar day.
+     * Returns true if the bonus was granted, false if already collected today.
+     */
+    suspend fun checkAndGrantDailyBonus(): Boolean {
+        val uid = auth.currentUser?.uid ?: return false
+        val ref = db.collection(FirestorePaths.USERS).document(uid)
+
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            .format(java.util.Date())
+
+        var granted = false
+        db.runTransaction { tx ->
+            val snap = tx.get(ref)
+            val lastBonus = snap.getString("lastBonusDate") ?: ""
+            if (lastBonus != today) {
+                val bal = snap.getDouble("balance") ?: 0.0
+                tx.update(ref, "balance", bal + 5.0)
+                tx.update(ref, "lastBonusDate", today)
+                granted = true
+            }
+        }.await()
+
+        if (granted) {
+            logTransaction(uid, "Daily login bonus", 5.0)
+        }
+        return granted
+    }
+
     suspend fun transferToUsername(recipientUsername: String, amount: Double) {
         require(amount > 0)
         val uid = auth.currentUser?.uid ?: error("Not signed in")

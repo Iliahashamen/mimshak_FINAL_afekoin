@@ -1,40 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/bg_primary">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Earn Afekoins"
-            android:textSize="26sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@color/afeka_green"
-            android:layout_marginBottom="32dp" />
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="4dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Play games to top up your wallet"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="28dp" />
+
+        <!-- Class check card -->
         <LinearLayout
             android:id="@+id/layoutQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:background="@drawable/bg_earn_card"
+            android:padding="28dp"
             android:gravity="center">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Are you in class right now?"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Games may be locked during class hours to help you focus."
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:gravity="center"
                 android:layout_marginBottom="24dp" />
-            <Button android:id="@+id/btnYesInClass" android:layout_width="200dp" android:layout_height="60dp" android:text="YES" android:backgroundTint="@color/afeka_green" android:layout_marginBottom="12dp" />
-            <Button android:id="@+id/btnNoNotInClass" android:layout_width="200dp" android:layout_height="60dp" android:text="NO" android:backgroundTint="#757575" />
+
+            <Button
+                android:id="@+id/btnYesInClass"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
+                android:text="YES, I'M IN CLASS"
+                android:textSize="13sp"
+                android:backgroundTint="@color/accent_green"
+                android:textColor="@color/bg_primary"
+                android:layout_marginBottom="10dp"
+                app:cornerRadius="12dp" />
+
+            <Button
+                android:id="@+id/btnNoNotInClass"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
+                android:text="NO, I'M FREE"
+                android:textSize="13sp"
+                android:backgroundTint="@color/bg_card"
+                android:textColor="@color/text_primary"
+                app:cornerRadius="12dp" />
+
         </LinearLayout>
 
+        <!-- Games list (hidden until class check) -->
         <LinearLayout
             android:id="@+id/layoutEarnButtons"
             android:layout_width="match_parent"
@@ -42,26 +89,152 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <Button android:id="@+id/btnAfequiz" android:layout_width="match_parent" android:layout_height="65dp" android:text="AFEQUIZ" android:backgroundTint="@color/afeka_green" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Answer multiple-choice questions correctly to earn points." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+            <!-- Afequiz card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_earn_card"
+                android:padding="20dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
-            <Button android:id="@+id/btnAfekliker" android:layout_width="match_parent" android:layout_height="65dp" android:text="AFEKLIKER" android:backgroundTint="@color/afeka_green" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tap the Afekoin logo as fast as you can for instant coins." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="12dp">
 
-            <Button android:id="@+id/btnLiebnitz" android:layout_width="match_parent" android:layout_height="65dp" android:text="LIEBNITZ" android:backgroundTint="@color/afeka_green" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Navigate your spacecraft and escape obstacles in deep space." android:textColor="#666666" android:layout_marginBottom="24dp" android:layout_marginTop="4dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Afequiz"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
 
-            <Button android:id="@+id/btnMine" android:layout_width="match_parent" android:layout_height="65dp" android:text="MINE" android:backgroundTint="@color/afeka_green" />
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Turn your device into a miner to passively earn coins." android:textColor="#666666" android:layout_marginBottom="16dp" android:layout_marginTop="4dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Answer CS &amp; Android questions to earn coins"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="3dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnAfequiz"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:text="PLAY"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/accent_green"
+                    android:textColor="@color/bg_primary"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
+            <!-- Afekliker card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_earn_card"
+                android:padding="20dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Afekliker"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap the logo as fast as you can — 20 seconds"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="3dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnAfekliker"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:text="PLAY"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/accent_blue"
+                    android:textColor="@color/white"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
+            <!-- Liebnitz card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_earn_card"
+                android:padding="20dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Liebnitz"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dodge obstacles in a 3-lane space runner"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="3dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnLiebnitz"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:text="PLAY"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/accent_purple"
+                    android:textColor="@color/white"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvLockMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#FF5252"
+                android:textColor="@color/accent_red"
+                android:textSize="13sp"
                 android:textStyle="bold|italic"
                 android:gravity="center"
+                android:padding="12dp"
                 android:visibility="gone" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -21,6 +21,10 @@ class LeaderboardActivity : AppCompatActivity() {
         rvLeaderboard = findViewById(R.id.rvLeaderboard)
         rvLeaderboard.layoutManager = LinearLayoutManager(this)
 
+        findViewById<android.widget.ImageButton>(R.id.btnLeaderboardBack).setOnClickListener {
+            finish()
+        }
+
         fetchLeaderboardData()
     }
 

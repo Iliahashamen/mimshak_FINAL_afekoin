@@ -38,6 +38,10 @@ class LoginActivity : AppCompatActivity() {
             navigateToMain()
             return
         }
+        if (DevLogin.isDevSession(this)) {
+            navigateToMain()
+            return
+        }
 
         signUpButton.setOnClickListener { handleSignUp() }
         loginButton.setOnClickListener { handleLogin() }
@@ -49,6 +53,13 @@ class LoginActivity : AppCompatActivity() {
 
         if (email.isBlank() || password.isBlank()) {
             Toast.makeText(this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (DevLogin.ENABLED) {
+            DevLogin.startDevSession(this)
+            Toast.makeText(this, "Dev login — hello ${DevLogin.DISPLAY_USERNAME}", Toast.LENGTH_SHORT).show()
+            navigateToMain()
             return
         }
 
@@ -71,6 +82,12 @@ class LoginActivity : AppCompatActivity() {
 
         if (email.isBlank() || password.isBlank()) {
             Toast.makeText(this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (DevLogin.ENABLED) {
+            DevLogin.startDevSession(this)
+            navigateToMain()
             return
         }
 
