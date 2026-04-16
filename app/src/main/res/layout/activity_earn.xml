@@ -134,7 +134,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="CS &amp; Android trivia — perfect score wins"
+                            android:text="CS &amp; Android trivia — 1 AFK per correct answer"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="2dp" />
@@ -149,8 +149,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+4 AFK"
-                            android:textSize="13sp"
+                            android:text="1 AFK / question"
+                            android:textSize="11sp"
                             android:textStyle="bold"
                             android:textColor="@color/accent_green"
                             android:layout_marginBottom="6dp" />

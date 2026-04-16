@@ -33,7 +33,7 @@ class AfequizActivity : AppCompatActivity() {
     private var timer: CountDownTimer? = null
     private lateinit var optionButtons: List<Button>
 
-    private val labels = listOf("A", "B", "C", "D")
+    private val labels = listOf("A:", "B:", "C:", "D:")
 
     // Theme colours from colors.xml
     private val colorCard   by lazy { getColor(R.color.bg_card) }
@@ -152,20 +152,20 @@ class AfequizActivity : AppCompatActivity() {
 
     private fun endGame() {
         timer?.cancel()
-        if (score == 15) {
+        if (score > 0) {
             lifecycleScope.launch {
                 try {
                     if (FirebaseAuth.getInstance().currentUser == null) {
                         navigateToLogin()
                         return@launch
                     }
-                    val quizReward = 4.00
-                    FirebaseWallet.addCredits(quizReward, "Quiz reward (perfect score)")
+                    val reward = score.toDouble()
+                    FirebaseWallet.addCredits(reward, "Quiz — $score/15 correct")
                     withContext(Dispatchers.Main) {
                         SoundFx.coinEarned()
                         Toast.makeText(
                             this@AfequizActivity,
-                            "Perfect score! +$quizReward AFK earned!",
+                            "+${reward.toInt()} AFK earned ($score correct answers)!",
                             Toast.LENGTH_LONG
                         ).show()
                         navigateToResults()
