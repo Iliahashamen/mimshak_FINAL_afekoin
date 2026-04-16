@@ -1,12 +1,10 @@
 package com.example.mimshak_final_afekoin
 
 import android.content.Context
-import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -14,104 +12,102 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 /**
- * Spaceship math game:
- * - An equation is shown at the top
- * - Three pods fall, each with a number — only one is the correct answer
- * - Player steers the spaceship (tap left / right) into the correct pod lane
- * - Hitting the correct pod → score +1, new equation
- * - Hitting a wrong pod → game over
+ * Retro pixel-art spaceship math game.
+ * - An equation is shown in the HUD above
+ * - Three pixel blocks fall, each with a number — only one is the correct answer
+ * - Player steers the ship (tap left / right of screen) into the correct lane
+ * - Correct hit → score +1, next wave; wrong hit or missed correct block → game over
+ *
+ * All BlurMaskFilter usage removed (crash source); rendering is hardware-accelerated safe.
  */
 class LiebnitzGameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    // ── Paints ───────────────────────────────────────────────────────────────
+    // ── Retro palette ─────────────────────────────────────────────────────────
+    private val CLR_BG      = Color.parseColor("#000000")
+    private val CLR_GRID    = Color.parseColor("#0A1A0A")
+    private val CLR_CORRECT = Color.parseColor("#00FF41")   // Matrix green
+    private val CLR_WRONG   = Color.parseColor("#FF2020")   // Arcade red
+    private val CLR_SHIP    = Color.parseColor("#00FF41")
+    private val CLR_FLAME   = Color.parseColor("#FFB800")
+    private val CLR_STAR    = Color.parseColor("#FFFFFF")
+    private val CLR_SCANLINE = Color.parseColor("#0A000000")
 
-    private val paintBg = Paint().apply { color = Color.parseColor("#0D1117") }
-    private val paintLane = Paint().apply {
-        color = Color.parseColor("#21262D")
-        strokeWidth = 2f
-    }
-    private val paintStars = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
-        alpha = 100
-    }
+    // ── Paints (no ANTI_ALIAS for crisp pixel look) ──────────────────────────
+    private val pBg      = Paint().apply { color = CLR_BG }
+    private val pGrid    = Paint().apply { color = CLR_GRID; strokeWidth = 1f }
+    private val pCorrect = Paint().apply { color = CLR_CORRECT }
+    private val pWrong   = Paint().apply { color = CLR_WRONG }
+    private val pShip    = Paint().apply { color = CLR_SHIP }
+    private val pFlame   = Paint().apply { color = CLR_FLAME }
+    private val pStar    = Paint().apply { color = CLR_STAR }
+    private val pScanline = Paint().apply { color = CLR_SCANLINE }
 
-    // Correct pod (green)
-    private val paintCorrect = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#00C853")
-    }
-    private val paintCorrectGlow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5500C853")
-        maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.NORMAL)
-    }
-
-    // Wrong pod (red)
-    private val paintWrong = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#FF453A")
-    }
-    private val paintWrongGlow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#55FF453A")
-        maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.NORMAL)
+    private val pBorder = Paint().apply {
+        color = Color.parseColor("#003010")
+        strokeWidth = 3f
+        style = Paint.Style.STROKE
     }
 
-    // Spaceship
-    private val paintShip = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#00C853")
-    }
-    private val paintShipGlow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#4400C853")
-        maskFilter = BlurMaskFilter(30f, BlurMaskFilter.Blur.NORMAL)
-    }
-    private val paintEngine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#FFD60A")
-        maskFilter = BlurMaskFilter(16f, BlurMaskFilter.Blur.NORMAL)
-    }
-
-    // Text on pods
-    private val paintPodText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
+    private val pText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = CLR_BG
         textAlign = Paint.Align.CENTER
-        textSize = 44f
+        typeface = Typeface.MONOSPACE
         isFakeBoldText = true
     }
 
-    // ── Game state ───────────────────────────────────────────────────────────
+    private val pTextWrong = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#FFE0E0")
+        textAlign = Paint.Align.CENTER
+        typeface = Typeface.MONOSPACE
+        isFakeBoldText = true
+    }
 
-    private var running = true
+    // ── Game state ────────────────────────────────────────────────────────────
+    private var running    = true
     private var playerLane = 1
-    private var scoreInt = 0
+    private var scoreInt   = 0
 
-    private data class Star(var x: Float, var y: Float, val r: Float, val speed: Float)
-    private val stars = mutableListOf<Star>()
+    private data class Star(var x: Float, var y: Float, val size: Float, val speed: Float)
+    private val stars    = mutableListOf<Star>()
     private var starsInit = false
 
     private data class Pod(
-        val lane: Int,
-        var y: Float,
-        val answer: Int,
-        val isCorrect: Boolean,
-        val speed: Float
+        val lane: Int, var y: Float, val answer: Int, val isCorrect: Boolean, val speed: Float
     )
     private val pods = mutableListOf<Pod>()
 
-    // Current equation
-    private var equationText = ""
+    private var equationText  = ""
     private var correctAnswer = 0
-    private var waveActive = false
+    private var waveActive    = false
+
+    // Pixel ship template (columns × rows, 1 = filled, 0 = empty)
+    private val shipPixels = arrayOf(
+        intArrayOf(0, 0, 1, 0, 0),
+        intArrayOf(0, 1, 1, 1, 0),
+        intArrayOf(1, 1, 1, 1, 1),
+        intArrayOf(1, 0, 1, 0, 1),
+        intArrayOf(0, 0, 1, 0, 0),
+        intArrayOf(0, 0, 1, 0, 0)
+    )
+    // Flame pixels below ship
+    private val flamePixels = arrayOf(
+        intArrayOf(0, 0, 1, 0, 0),
+        intArrayOf(0, 1, 0, 1, 0)
+    )
 
     var onScoreChanged: ((Int, String) -> Unit)? = null
     var onCrash: ((Int) -> Unit)? = null
 
-    // ── Loop ─────────────────────────────────────────────────────────────────
-
+    // ── Game loop ─────────────────────────────────────────────────────────────
     private val loop = object : Runnable {
         override fun run() {
             if (!running || width == 0) return
             tick()
             invalidate()
-            postDelayed(this, 32L)
+            postDelayed(this, 40L)   // 25 fps — light on CPU
         }
     }
 
@@ -126,8 +122,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    // ── Tick ─────────────────────────────────────────────────────────────────
-
+    // ── Tick ──────────────────────────────────────────────────────────────────
     private fun tick() {
         if (width == 0) return
         initStars()
@@ -136,52 +131,40 @@ class LiebnitzGameView @JvmOverloads constructor(
         val w = width.toFloat()
         val laneW = w / 3f
 
-        // Star parallax
-        val speedMult = 1f + (scoreInt / 8f) * 0.2f
         stars.forEach { s ->
-            s.y += s.speed * speedMult.coerceAtMost(3f) * 0.5f
-            if (s.y > h) s.y = -4f
+            s.y += s.speed * (1f + scoreInt * 0.03f).coerceAtMost(3f)
+            if (s.y > h) s.y = 0f
         }
 
-        // Spawn a new wave when no pods on screen
         if (!waveActive && pods.isEmpty()) {
             spawnWave()
             waveActive = true
         }
 
-        // Move pods
         val baseSpeed = (h * 0.004f) * (1f + scoreInt * 0.04f).coerceAtMost(2.2f)
         pods.forEach { it.y += it.speed * baseSpeed }
 
-        // Ship position
         val shipCx = laneW * playerLane + laneW / 2f
-        val shipTop = h * 0.76f
-        val shipBottom = h * 0.94f
-        val shipHalfW = laneW * 0.28f
+        val shipMidY = h * 0.85f
 
-        // Collision check
         val iter = pods.iterator()
         while (iter.hasNext()) {
             val pod = iter.next()
             val podCx = laneW * pod.lane + laneW / 2f
-            val podR = laneW * 0.32f
-            val podCy = pod.y
+            val podHalf = laneW * 0.34f
 
-            // Check if pod overlaps with ship
             val dx = podCx - shipCx
-            val dy = podCy - (shipTop + shipBottom) / 2f
+            val dy = pod.y - shipMidY
             val dist = sqrt((dx * dx + dy * dy).toDouble()).toFloat()
 
-            if (dist < podR + laneW * 0.25f) {
+            if (dist < podHalf + laneW * 0.22f) {
                 if (pod.isCorrect) {
-                    // Correct — score and next wave
                     scoreInt++
                     onScoreChanged?.invoke(scoreInt, equationText)
                     iter.remove()
                     pods.clear()
                     waveActive = false
                 } else {
-                    // Wrong — game over
                     running = false
                     removeCallbacks(loop)
                     onCrash?.invoke(scoreInt)
@@ -189,8 +172,7 @@ class LiebnitzGameView @JvmOverloads constructor(
                 }
             }
 
-            // Pod exited screen — if correct pod missed, game over
-            if (pod.y > h + 100f) {
+            if (pod.y > h + 120f) {
                 if (pod.isCorrect) {
                     running = false
                     removeCallbacks(loop)
@@ -203,56 +185,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
-    private fun spawnWave() {
-        val correctLane = Random.nextInt(3)
-        val (eq, ans) = generateEquation()
-        equationText = eq
-        correctAnswer = ans
-
-        val wrongAnswers = generateWrongAnswers(ans)
-        var wrongIdx = 0
-
-        val speed = 1f + Random.nextFloat() * 0.3f
-        repeat(3) { lane ->
-            val answer = if (lane == correctLane) ans else wrongAnswers[wrongIdx++]
-            pods.add(Pod(lane, -120f, answer, lane == correctLane, speed))
-        }
-        onScoreChanged?.invoke(scoreInt, equationText)
-    }
-
-    private fun generateEquation(): Pair<String, Int> {
-        val op = Random.nextInt(3)
-        return when (op) {
-            0 -> {
-                val a = Random.nextInt(3, 15)
-                val b = Random.nextInt(3, 15)
-                Pair("$a + $b", a + b)
-            }
-            1 -> {
-                val a = Random.nextInt(8, 20)
-                val b = Random.nextInt(1, a)
-                Pair("$a − $b", a - b)
-            }
-            else -> {
-                val a = Random.nextInt(2, 10)
-                val b = Random.nextInt(2, 10)
-                Pair("$a × $b", a * b)
-            }
-        }
-    }
-
-    private fun generateWrongAnswers(correct: Int): List<Int> {
-        val wrongs = mutableSetOf<Int>()
-        while (wrongs.size < 2) {
-            val offset = Random.nextInt(1, 8) * (if (Random.nextBoolean()) 1 else -1)
-            val wrong = (correct + offset).coerceAtLeast(0)
-            if (wrong != correct) wrongs.add(wrong)
-        }
-        return wrongs.toList()
-    }
-
-    // ── Touch ────────────────────────────────────────────────────────────────
-
+    // ── Touch ─────────────────────────────────────────────────────────────────
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!running) return false
         if (event.action == MotionEvent.ACTION_DOWN) {
@@ -266,8 +199,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    // ── Draw ─────────────────────────────────────────────────────────────────
-
+    // ── Draw ──────────────────────────────────────────────────────────────────
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val w = width.toFloat()
@@ -275,83 +207,152 @@ class LiebnitzGameView @JvmOverloads constructor(
         val laneW = w / 3f
 
         // Background
-        canvas.drawRect(0f, 0f, w, h, paintBg)
+        canvas.drawRect(0f, 0f, w, h, pBg)
 
-        // Stars
-        stars.forEach { canvas.drawCircle(it.x, it.y, it.r, paintStars) }
-
-        // Lane dividers
-        for (i in 1..2) {
-            canvas.drawLine(laneW * i, 0f, laneW * i, h, paintLane)
+        // Grid dots (subtle)
+        var gx = 0f
+        while (gx < w) {
+            canvas.drawLine(gx, 0f, gx, h, pGrid)
+            gx += laneW
         }
 
-        // Pods
+        // Stars as pixel dots
+        stars.forEach { s ->
+            canvas.drawRect(s.x, s.y, s.x + s.size, s.y + s.size, pStar)
+        }
+
+        // Lane dividers (dashed pixel lines)
+        drawDashedLine(canvas, laneW,     0f, laneW,     h, 12f, 8f)
+        drawDashedLine(canvas, laneW * 2, 0f, laneW * 2, h, 12f, 8f)
+
+        // Pods as pixel blocks
         for (pod in pods) {
-            val cx = laneW * pod.lane + laneW / 2f
-            val r = laneW * 0.32f
-            val glowPaint = if (pod.isCorrect) paintCorrectGlow else paintWrongGlow
-            val fillPaint = if (pod.isCorrect) paintCorrect else paintWrong
-            canvas.drawCircle(cx, pod.y, r + 8f, glowPaint)
-            canvas.drawCircle(cx, pod.y, r, fillPaint)
-            paintPodText.textSize = r * 0.72f
-            canvas.drawText(pod.answer.toString(), cx, pod.y + paintPodText.textSize * 0.36f, paintPodText)
+            drawPixelBlock(canvas, pod, laneW)
         }
 
-        // Spaceship
-        drawSpaceship(canvas, laneW * playerLane + laneW / 2f, h * 0.85f, laneW * 0.32f)
+        // Ship
+        drawPixelShip(canvas, laneW * playerLane + laneW / 2f, h * 0.85f, laneW * 0.09f)
+
+        // Scanlines overlay (retro CRT effect — just semi-transparent stripes every 4px)
+        var sy = 0f
+        while (sy < h) {
+            canvas.drawRect(0f, sy, w, sy + 1f, pScanline)
+            sy += 4f
+        }
     }
 
-    private fun drawSpaceship(canvas: Canvas, cx: Float, cy: Float, size: Float) {
-        // Engine flame
-        val flamePath = Path().apply {
-            moveTo(cx, cy + size * 1.1f)
-            lineTo(cx - size * 0.18f, cy + size * 0.55f)
-            lineTo(cx + size * 0.18f, cy + size * 0.55f)
-            close()
-        }
-        canvas.drawPath(flamePath, paintEngine)
+    private fun drawPixelBlock(canvas: Canvas, pod: Pod, laneW: Float) {
+        val cx    = laneW * pod.lane + laneW / 2f
+        val half  = laneW * 0.36f
+        val left  = cx - half
+        val top   = pod.y - half
+        val right = cx + half
+        val bot   = pod.y + half
 
-        // Ship body (glow)
-        val glowPath = Path().apply {
-            moveTo(cx, cy - size)
-            lineTo(cx - size * 0.6f, cy + size * 0.6f)
-            lineTo(cx - size * 0.22f, cy + size * 0.35f)
-            lineTo(cx + size * 0.22f, cy + size * 0.35f)
-            lineTo(cx + size * 0.6f, cy + size * 0.6f)
-            close()
+        val fill = if (pod.isCorrect) pCorrect else pWrong
+
+        // Outer block
+        canvas.drawRect(left, top, right, bot, fill)
+
+        // Inner dark border (pixel look)
+        pBorder.color = if (pod.isCorrect) Color.parseColor("#004020") else Color.parseColor("#400000")
+        canvas.drawRect(left, top, right, bot, pBorder)
+
+        // Number text
+        val textPaint = if (pod.isCorrect) pText else pTextWrong
+        textPaint.textSize = half * 0.9f
+        canvas.drawText(pod.answer.toString(), cx, pod.y + textPaint.textSize * 0.36f, textPaint)
+    }
+
+    private fun drawPixelShip(canvas: Canvas, cx: Float, cy: Float, px: Float) {
+        val cols = shipPixels[0].size
+        val rows = shipPixels.size
+        val startX = cx - (cols / 2f) * px
+        val startY = cy - rows * px
+
+        // Flame first (behind ship)
+        val flameStartY = startY + rows * px
+        flamePixels.forEachIndexed { row, rowData ->
+            rowData.forEachIndexed { col, cell ->
+                if (cell == 1) {
+                    val x = startX + col * px
+                    val y = flameStartY + row * px
+                    canvas.drawRect(x, y, x + px - 1f, y + px - 1f, pFlame)
+                }
+            }
         }
-        canvas.drawPath(glowPath, paintShipGlow)
 
         // Ship body
-        val bodyPath = Path().apply {
-            moveTo(cx, cy - size)
-            lineTo(cx - size * 0.5f, cy + size * 0.5f)
-            lineTo(cx - size * 0.18f, cy + size * 0.25f)
-            lineTo(cx + size * 0.18f, cy + size * 0.25f)
-            lineTo(cx + size * 0.5f, cy + size * 0.5f)
-            close()
+        shipPixels.forEachIndexed { row, rowData ->
+            rowData.forEachIndexed { col, cell ->
+                if (cell == 1) {
+                    val x = startX + col * px
+                    val y = startY + row * px
+                    canvas.drawRect(x, y, x + px - 1f, y + px - 1f, pShip)
+                }
+            }
         }
-        canvas.drawPath(bodyPath, paintShip)
-
-        // Cockpit window
-        val cockpitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#001F0E")
-        }
-        canvas.drawOval(
-            RectF(cx - size * 0.2f, cy - size * 0.4f, cx + size * 0.2f, cy + size * 0.05f),
-            cockpitPaint
-        )
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    private fun drawDashedLine(canvas: Canvas, x1: Float, y1: Float, x2: Float, y2: Float,
+                                dashLen: Float, gapLen: Float) {
+        val p = Paint().apply {
+            color = Color.parseColor("#1A3020")
+            strokeWidth = 2f
+        }
+        var y = y1
+        while (y < y2) {
+            canvas.drawLine(x1, y, x2, (y + dashLen).coerceAtMost(y2), p)
+            y += dashLen + gapLen
+        }
+    }
 
+    // ── Spawn / equations ─────────────────────────────────────────────────────
+    private fun spawnWave() {
+        val correctLane = Random.nextInt(3)
+        val (eq, ans) = generateEquation()
+        equationText  = eq
+        correctAnswer = ans
+
+        val wrongAnswers = generateWrongAnswers(ans)
+        var wrongIdx = 0
+        val speed = 1f + Random.nextFloat() * 0.3f
+        repeat(3) { lane ->
+            val answer = if (lane == correctLane) ans else wrongAnswers[wrongIdx++]
+            pods.add(Pod(lane, -120f, answer, lane == correctLane, speed))
+        }
+        onScoreChanged?.invoke(scoreInt, equationText)
+    }
+
+    private fun generateEquation(): Pair<String, Int> {
+        return when (Random.nextInt(3)) {
+            0 -> { val a = Random.nextInt(3, 15); val b = Random.nextInt(3, 15)
+                   Pair("$a + $b", a + b) }
+            1 -> { val a = Random.nextInt(8, 20); val b = Random.nextInt(1, a)
+                   Pair("$a - $b", a - b) }
+            else -> { val a = Random.nextInt(2, 10); val b = Random.nextInt(2, 10)
+                      Pair("$a x $b", a * b) }
+        }
+    }
+
+    private fun generateWrongAnswers(correct: Int): List<Int> {
+        val wrongs = mutableSetOf<Int>()
+        while (wrongs.size < 2) {
+            val offset = Random.nextInt(1, 8) * (if (Random.nextBoolean()) 1 else -1)
+            val wrong = (correct + offset).coerceAtLeast(0)
+            if (wrong != correct) wrongs.add(wrong)
+        }
+        return wrongs.toList()
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
     private fun initStars() {
         if (starsInit || width == 0) return
-        repeat(50) {
+        repeat(40) {
             stars.add(Star(
                 Random.nextFloat() * width,
                 Random.nextFloat() * height,
-                Random.nextFloat() * 2f + 0.5f,
+                if (Random.nextBoolean()) 1f else 2f,
                 Random.nextFloat() * 2f + 1f
             ))
         }
@@ -362,11 +363,11 @@ class LiebnitzGameView @JvmOverloads constructor(
 
     fun resetGame() {
         pods.clear()
-        scoreInt = 0
+        scoreInt   = 0
         playerLane = 1
         waveActive = false
-        running = true
-        starsInit = false
+        running    = true
+        starsInit  = false
         stars.clear()
         equationText = ""
         onScoreChanged?.invoke(0, "")

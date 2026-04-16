@@ -28,7 +28,7 @@ class LiebnitzActivity : AppCompatActivity() {
 
         gameView.onScoreChanged = { score, equation ->
             runOnUiThread {
-                tvScore.text = "Score: $score"
+                tvScore.text = "SCORE: $score"
                 if (equation.isNotBlank()) tvEquation.text = equation
             }
         }
