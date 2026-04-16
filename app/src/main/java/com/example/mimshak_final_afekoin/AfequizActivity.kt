@@ -1,12 +1,12 @@
 package com.example.mimshak_final_afekoin
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,9 +29,18 @@ class AfequizActivity : AppCompatActivity() {
     private lateinit var questionList: List<QuizQuestion>
     private var currentQuestionIndex = 0
     private var score = 0
-    private var timeRemainingMillis: Long = 600000
+    private var timeRemainingMillis: Long = 600_000L
     private var timer: CountDownTimer? = null
     private lateinit var optionButtons: List<Button>
+
+    private val labels = listOf("A", "B", "C", "D")
+
+    // Theme colours from colors.xml
+    private val colorCard   by lazy { getColor(R.color.bg_card) }
+    private val colorGreen  by lazy { getColor(R.color.accent_green) }
+    private val colorRed    by lazy { getColor(R.color.accent_red) }
+    private val colorTimerWarn by lazy { getColor(R.color.accent_red) }
+    private val colorTimerOk   by lazy { getColor(R.color.accent_green) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +56,6 @@ class AfequizActivity : AppCompatActivity() {
         showNextQuestion()
     }
 
-    private fun removeCitations(input: String): String {
-        if (!input.contains("[")) return input
-        return input.split("[")[0].trim()
-    }
-
     private fun loadQuestions() {
         try {
             val inputStream: InputStream = assets.open("questions.json")
@@ -61,13 +65,15 @@ class AfequizActivity : AppCompatActivity() {
 
             for (i in 0 until jsonArray.length()) {
                 val obj = jsonArray.getJSONObject(i)
-                val cleanText = removeCitations(obj.getString("text"))
                 val optsJson = obj.getJSONArray("options")
-                val optsList = mutableListOf<String>()
-                for (j in 0 until optsJson.length()) {
-                    optsList.add(removeCitations(optsJson.getString(j)))
-                }
-                allQuestions.add(QuizQuestion(cleanText, optsList, removeCitations(obj.getString("correctAnswer"))))
+                val optsList = (0 until optsJson.length()).map { optsJson.getString(it) }
+                allQuestions.add(
+                    QuizQuestion(
+                        text = obj.getString("text"),
+                        options = optsList,
+                        correctAnswer = obj.getString("correctAnswer")
+                    )
+                )
             }
             questionList = allQuestions.shuffled().take(15)
         } catch (e: Exception) {
@@ -83,36 +89,50 @@ class AfequizActivity : AppCompatActivity() {
         }
 
         val q = questionList[currentQuestionIndex]
-        findViewById<TextView>(R.id.tvProgress).text = "Question ${currentQuestionIndex + 1} / 15"
+        val questionNum = currentQuestionIndex + 1
+
+        findViewById<TextView>(R.id.tvProgress).text = "Question $questionNum / 15"
+        findViewById<ProgressBar>(R.id.quizProgressBar).progress = questionNum
         findViewById<TextView>(R.id.tvQuestionText).text = q.text
 
         val shuffledOptions = q.options.shuffled()
-        for (i in 0..3) {
-            optionButtons[i].isEnabled = true
-            optionButtons[i].text = shuffledOptions[i]
-            optionButtons[i].setBackgroundColor(Color.LTGRAY)
-            optionButtons[i].setOnClickListener { checkAnswer(optionButtons[i], q.correctAnswer) }
+        optionButtons.forEachIndexed { i, btn ->
+            btn.isEnabled = true
+            btn.text = "${labels[i]}   ${shuffledOptions[i]}"
+            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorCard)
+            btn.setTextColor(getColor(R.color.text_primary))
+            btn.setOnClickListener { checkAnswer(btn, q.correctAnswer, shuffledOptions[i]) }
         }
     }
 
-    private fun checkAnswer(btn: Button, correct: String) {
+    private fun checkAnswer(btn: Button, correct: String, selectedText: String) {
         optionButtons.forEach { it.isEnabled = false }
-        if (btn.text == correct) {
+
+        if (selectedText == correct) {
+            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorGreen)
+            btn.setTextColor(getColor(R.color.bg_primary))
             score++
-            btn.setBackgroundColor(Color.GREEN)
-            timeRemainingMillis += 10000
+            timeRemainingMillis += 10_000L
             startNewTimer(timeRemainingMillis)
             SoundFx.success()
         } else {
-            btn.setBackgroundColor(Color.RED)
-            optionButtons.find { it.text == correct }?.setBackgroundColor(Color.GREEN)
+            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorRed)
+            btn.setTextColor(getColor(R.color.white))
+            // Highlight the correct button
+            optionButtons.find { b ->
+                val rawText = b.text.toString().substringAfter("   ")
+                rawText == correct
+            }?.let { correct_btn ->
+                correct_btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorGreen)
+                correct_btn.setTextColor(getColor(R.color.bg_primary))
+            }
             SoundFx.error()
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
             currentQuestionIndex++
             showNextQuestion()
-        }, 2000)
+        }, 1800)
     }
 
     private fun startNewTimer(millis: Long) {
@@ -122,7 +142,9 @@ class AfequizActivity : AppCompatActivity() {
                 timeRemainingMillis = t
                 val mins = (t / 1000) / 60
                 val secs = (t / 1000) % 60
-                findViewById<TextView>(R.id.tvTimer).text = String.format("%02d:%02d", mins, secs)
+                val tvTimer = findViewById<TextView>(R.id.tvTimer)
+                tvTimer.text = String.format("%02d:%02d", mins, secs)
+                tvTimer.setTextColor(if (t < 30_000L) colorTimerWarn else colorTimerOk)
             }
             override fun onFinish() { endGame() }
         }.start()
@@ -130,8 +152,6 @@ class AfequizActivity : AppCompatActivity() {
 
     private fun endGame() {
         timer?.cancel()
-
-        // Only award points for a perfect score
         if (score == 15) {
             lifecycleScope.launch {
                 try {
@@ -143,12 +163,20 @@ class AfequizActivity : AppCompatActivity() {
                     FirebaseWallet.addCredits(quizReward, "Quiz reward (perfect score)")
                     withContext(Dispatchers.Main) {
                         SoundFx.coinEarned()
-                        Toast.makeText(this@AfequizActivity, "Congratulations! You earned +$quizReward AFK!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this@AfequizActivity,
+                            "Perfect score! +$quizReward AFK earned!",
+                            Toast.LENGTH_LONG
+                        ).show()
                         navigateToResults()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AfequizActivity, "Error saving reward: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@AfequizActivity,
+                            "Error saving reward: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navigateToResults()
                     }
                 }
@@ -159,18 +187,22 @@ class AfequizActivity : AppCompatActivity() {
     }
 
     private fun navigateToResults() {
-        val intent = Intent(this, QuizResultActivity::class.java).apply {
+        startActivity(Intent(this, QuizResultActivity::class.java).apply {
             putExtra("SCORE", score)
             putExtra("SESSION_ID", System.currentTimeMillis())
-        }
-        startActivity(intent)
+        })
         finish()
     }
-    
+
     private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
         finish()
+    }
+
+    override fun onDestroy() {
+        timer?.cancel()
+        super.onDestroy()
     }
 }
