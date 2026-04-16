@@ -1,84 +1,93 @@
-# Afekoin — אפליקציית מטבע קמפוס (Android, Kotlin)
+# Afekoin — Campus Coin Wallet
 
-אפליקציה לדימוי מטבע פנים-ארגוני לאפקה: הרשמה והתחברות, ארנק, חנות (דמו), משחקים לזכייה במטבע, לוח תוצאות, העברות בין סטודנטים, והיסטוריית תנועות.
+An Android wallet app for Afeka College students. Earn, spend, and transfer a virtual campus currency (AFK) through mini-games and a peer-to-peer transfer system. Built with **Kotlin** and **Firebase**.
 
-## דרישות המרצה — מיפוי לפרויקט
+---
 
-| דרישה | מימוש |
-|--------|--------|
-| **שני רכיבי שרת ומעלה** | **Firebase Authentication** (אימייל/סיסמה), **Cloud Firestore** (נתוני משתמשים ותנועות), **Firebase Storage** (תמונת פרופיל). |
-| **העלאת תמונות** | במסך הראשי: לחיצה על תמונת הפרופיל → בחירת תמונה מהמכשיר → העלאה ל-`profile_images/{uid}.jpg` ועדכון `photoUrl` ב-Firestore. |
-| **ניהול דאטה ב-Firebase** | אוספים `users`, `transactions`; עדכוני יתרה ותנועות דרך `FirebaseWallet` ו-`UserRepository`. |
-| **שיתוף מידע בין משתמשים** | לוח תוצאות (קריאת כל ה-`users`), העברות (עדכון שני משתמשים + רישום תנועות לשני הצדדים). |
+## Features
 
-## ספריות עיקריות
+| Feature | Description |
+|---|---|
+| **Login / Sign-up** | Firebase Auth — email + password + custom username |
+| **Remember me** | Saves email between sessions |
+| **Forgot password** | Sends a reset email via Firebase |
+| **Daily bonus** | +5 AFK once per calendar day on login |
+| **Earn → Afequiz** | 15 random CS & Android trivia questions, +4 AFK for perfect score |
+| **Earn → Afekliker** | Tap the logo for 10 seconds, up to +2 AFK |
+| **Earn → Liebnitz** | Spaceship math runner, up to +5 AFK |
+| **Class lock** | Games locked for first 45 min of class if user says they're in class |
+| **College Store** | Spend AFK on Notebook (5), Coffee (3), Hoodie (25) |
+| **P2P Transfer** | Send AFK to any user by username |
+| **Transaction History** | Full ledger of every coin earned and spent |
+| **Profile photo** | Upload from gallery, stored in Firebase Storage |
 
-- **Firebase BoM** — Auth, Firestore, Storage  
-- **Kotlin Coroutines + kotlinx-coroutines-play-services** — קריאות אסינכרוניות ל-`Task`  
-- **Coil** — טעינת תמונות פרופיל מ-URL  
-- **Material / AppCompat** — UI  
+---
 
-## מבנה הקוד (פיזור ומחלקות)
+## How to Run
 
-- `data/` — מודלים: `Profile`, `LedgerEntry`  
-- `firebase/` — `FirestorePaths`, `UserRepository` (פרופיל, לידרבורד, היסטוריה, העלאת תמונה), `FirebaseWallet` (זיכוי, חיוב, העברה)  
-- מסכים בחבילה הראשית — Activities נפרדות לכל זרימה  
+### Prerequisites
+- Android Studio Hedgehog or newer
+- Android device or emulator (API 26+)
+- A Firebase project with **Email/Password** authentication enabled
 
-## הגדרת Firebase (חובה לפני הרצה)
+### Steps
 
-1. צרו פרויקט ב-[Firebase Console](https://console.firebase.google.com/).
-2. הוסיפו אפליקציית Android עם `applicationId`: `com.example.mimshak_final_afekoin`.
-3. הורידו את **`google-services.json`** האמיתי והחליפו את הקובץ תחת `app/` (התבנית ב-repo אינה מחוברת לפרויקט אמיתי).
-4. בקונסול: הפעילו **Authentication → Email/Password**, **Cloud Firestore**, **Storage**.
-5. **כללי אבטחה (חשוב להעברות):**  
-   עדכון יתרה של משתמש אחר בהעברה דורש כללים מתאימים. להדגמת קורס מומלץ כללים **מתיכנון מחדש לפרודקשן**:
+1. **Clone the repo**
+   ```
+   git clone https://github.com/Iliahashamen/mimshak_FINAL_afekoin.git
+   ```
+
+2. **Add your Firebase config**
+   - Go to [Firebase Console](https://console.firebase.google.com) → your project → Project settings → Download `google-services.json`
+   - Place the file at `app/google-services.json`
+   - (A template is provided at `app/google-services.json.example`)
+
+3. **Enable Firebase services** in the console:
+   - Authentication → Email/Password
+   - Firestore Database
+   - Storage
+
+4. **Open in Android Studio**, let Gradle sync, then **Run** on your device.
+
+---
+
+## Tech Stack
+
+- **Language:** Kotlin 100%
+- **UI:** XML layouts, Material Components, ConstraintLayout
+- **Backend:** Firebase Auth, Firestore, Firebase Storage
+- **Architecture:** Single-activity-per-screen, coroutines for async, object-based repositories
+- **Animations:** Custom XML `anim/` transitions (slide-up, fade)
+- **Sound:** Android `ToneGenerator` — no bundled audio files
+
+---
+
+## Project Structure
 
 ```
-// Firestore — דוגמה לסביבת הפגה / פרויקט סטודנטים בלבד
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    match /transactions/{id} {
-      allow read, create: if request.auth != null;
-    }
-  }
-}
+app/src/main/
+├── java/com/example/mimshak_final_afekoin/
+│   ├── firebase/          # FirebaseWallet, UserRepository, FirestorePaths
+│   ├── data/              # Profile, LedgerEntry (data models)
+│   ├── MainActivity        # Home screen
+│   ├── LoginActivity       # Login + forgot password
+│   ├── SignUpActivity      # Registration
+│   ├── EarnActivity        # Game hub
+│   ├── AfequizActivity     # Trivia game
+│   ├── AfeklikerActivity   # Tap game
+│   ├── LiebnitzActivity    # Space runner host
+│   ├── LiebnitzGameView    # Custom game canvas view
+│   ├── PayActivity         # Campus store
+│   ├── TransferActivity    # P2P coin transfer
+│   ├── HistoryActivity     # Transaction history
+│   └── SoundFx             # Lightweight sound effects
+└── res/
+    ├── layout/             # All screen XMLs
+    ├── anim/               # Transition animations
+    ├── drawable/           # Shapes, gradients, icons
+    └── values/             # Colors, strings, themes
 ```
 
-```
-// Storage — תמונות פרופיל
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /profile_images/{fileName} {
-      allow read: if true;
-      allow write: if request.auth != null && fileName == request.auth.uid + '.jpg';
-    }
-  }
-}
-```
+---
 
-בפרודקשן: להקשיח כללים ו/או להשתמש ב-Cloud Functions להעברות.
-
-6. **אינדקס ב-Firestore:** אם מסך ההיסטוריה נופל עם שגיאת אינדקס, לחצו על הקישור בלוגקאט וצרו את האינדקס המורכב עבור `transactions`: שדה `userId` (Ascending) + `createdAt` (Descending).
-
-## בנייה
-
-```bash
-./gradlew assembleDebug
-```
-
-## הגשה
-
-- ריפו ציבורי ב-GitHub (לפי הנחיות הקורס).  
-- סרטון/קישור לסרטון + README מעודכן — מומלץ לצרף צילומי מסך של המסכים העיקריים והסבר קצר על קשיים (למשל אינדקס Firestore, כללי אבטחה).
-
-## קריסות אפשריות (להצגה בכיתה)
-
-- **`google-services.json` חסר או לא תואם** — האפליקציה לא תתחבר לפרויקט.  
-- **כללי Firestore/Storage חוסמים כתיבה** — זיכוי/חיוב/העברה/העלאת תמונה ייכשלו עם הודעת שגיאה בלוג.  
-- **אינדקס חסר** — טעינת היסטוריית תנועות עלולה להיכשל עד יצירת האינדקס.
+*Final project — Mobile App Development, Afeka College of Engineering*

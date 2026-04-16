@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase config — contains API keys, never commit this
+app/google-services.json
+
+# Cursor IDE folder
+.cursor/
