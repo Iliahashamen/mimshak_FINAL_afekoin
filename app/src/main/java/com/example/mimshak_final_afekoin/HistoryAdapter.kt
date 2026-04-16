@@ -31,13 +31,17 @@ class HistoryAdapter(private val entries: List<LedgerEntry>) :
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTranTitle)
         private val tvAmount: TextView = itemView.findViewById(R.id.tvTranAmount)
         private val tvDate: TextView = itemView.findViewById(R.id.tvTranDate)
+        private val dot: View = itemView.findViewById(R.id.viewDot)
 
         fun bind(entry: LedgerEntry) {
             tvTitle.text = entry.description
             val isPositive = entry.amount >= 0
             val amountText = String.format("%s%.2f AFK", if (isPositive) "+" else "", entry.amount)
+            val colorGreen = Color.parseColor("#00C853")
+            val colorRed   = Color.parseColor("#FF453A")
             tvAmount.text = amountText
-            tvAmount.setTextColor(if (isPositive) Color.parseColor("#2E7D32") else Color.parseColor("#C62828"))
+            tvAmount.setTextColor(if (isPositive) colorGreen else colorRed)
+            dot.setBackgroundColor(if (isPositive) colorGreen else colorRed)
             tvDate.text = formatTimestamp(entry.createdAt)
         }
     }

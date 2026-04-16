@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 /**
@@ -81,7 +82,6 @@ class LiebnitzGameView @JvmOverloads constructor(
     private var running = true
     private var playerLane = 1
     private var scoreInt = 0
-    private var tickCount = 0
 
     private data class Star(var x: Float, var y: Float, val r: Float, val speed: Float)
     private val stars = mutableListOf<Star>()
@@ -143,8 +143,6 @@ class LiebnitzGameView @JvmOverloads constructor(
             if (s.y > h) s.y = -4f
         }
 
-        tickCount++
-
         // Spawn a new wave when no pods on screen
         if (!waveActive && pods.isEmpty()) {
             spawnWave()
@@ -172,7 +170,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             // Check if pod overlaps with ship
             val dx = podCx - shipCx
             val dy = podCy - (shipTop + shipBottom) / 2f
-            val dist = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+            val dist = sqrt((dx * dx + dy * dy).toDouble()).toFloat()
 
             if (dist < podR + laneW * 0.25f) {
                 if (pod.isCorrect) {
@@ -366,7 +364,6 @@ class LiebnitzGameView @JvmOverloads constructor(
         pods.clear()
         scoreInt = 0
         playerLane = 1
-        tickCount = 0
         waveActive = false
         running = true
         starsInit = false

@@ -28,7 +28,35 @@
             android:text="Spend your campus coins on Afeka items"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginBottom="16dp" />
+
+        <!-- Balance banner -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_earn_card"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Your balance"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/tvPayBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="…"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+        </LinearLayout>
 
         <!-- Notebook item -->
         <LinearLayout

@@ -54,14 +54,15 @@ class LoginActivity : AppCompatActivity() {
             checkRememberMe.isChecked = true
         }
 
-        loginButton.setOnClickListener { handleLogin() }
+        loginButton.setOnClickListener { SoundFx.click(); handleLogin() }
 
-        // Open the dedicated sign-up screen
         signUpButton.setOnClickListener {
+            SoundFx.click()
             startActivity(Intent(this, SignUpActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
-        tvForgotPassword.setOnClickListener { handleForgotPassword() }
+        tvForgotPassword.setOnClickListener { SoundFx.click(); handleForgotPassword() }
     }
 
     private fun handleLogin() {

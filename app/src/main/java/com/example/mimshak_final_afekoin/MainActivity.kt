@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
-import com.example.mimshak_final_afekoin.data.Profile
 import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -57,10 +56,6 @@ class MainActivity : AppCompatActivity() {
         ivProfileAvatar = findViewById(R.id.ivProfileAvatar)
 
         ivProfileAvatar.setOnClickListener {
-            if (DevLogin.isDevSession(this)) {
-                Toast.makeText(this, "Profile photo upload is off in dev mode", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
             pickImage.launch("image/*")
         }
 
@@ -75,18 +70,6 @@ class MainActivity : AppCompatActivity() {
     private fun fetchUserProfile() {
         lifecycleScope.launch {
             try {
-                if (DevLogin.isDevSession(this@MainActivity)) {
-                    currentUserProfile = Profile(
-                        id = "dev_local",
-                        username = DevLogin.DISPLAY_USERNAME,
-                        balance = 30.0,
-                        photoUrl = null,
-                    )
-                    updateUI()
-                    ivProfileAvatar.setImageResource(R.mipmap.afekoin_logo)
-                    return@launch
-                }
-
                 val user = auth.currentUser
                 if (user == null) {
                     goToLogin()
@@ -155,27 +138,37 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupButtons() {
         btnEye.setOnClickListener {
+            SoundFx.click()
             isHidden = !isHidden
             updateBalanceDisplay()
         }
 
         findViewById<Button>(R.id.btnEarn).setOnClickListener {
+            SoundFx.click()
             startActivity(Intent(this, EarnActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<ImageButton>(R.id.btnHistory).setOnClickListener {
+            SoundFx.click()
             startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<Button>(R.id.btnPay).setOnClickListener {
+            SoundFx.click()
             startActivity(Intent(this, PayActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<Button>(R.id.btnTransfer).setOnClickListener {
+            SoundFx.click()
             startActivity(Intent(this, TransferActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<ImageButton>(R.id.btnSignOut).setOnClickListener {
+            SoundFx.click()
             confirmSignOut()
         }
     }
@@ -185,11 +178,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Sign out")
             .setMessage("Are you sure you want to sign out?")
             .setPositiveButton("Sign out") { _, _ ->
-                if (DevLogin.isDevSession(this)) {
-                    DevLogin.clearDevSession(this)
-                } else {
-                    auth.signOut()
-                }
+                auth.signOut()
                 goToLogin()
             }
             .setNegativeButton("Cancel", null)

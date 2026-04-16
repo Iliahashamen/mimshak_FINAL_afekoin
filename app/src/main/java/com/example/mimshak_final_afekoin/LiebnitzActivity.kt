@@ -10,6 +10,10 @@ import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
+/**
+ * Hosts the [LiebnitzGameView] spaceship math game.
+ * Awards up to 5.00 AFK based on the number of correct answers before crashing.
+ */
 class LiebnitzActivity : AppCompatActivity() {
 
     private var rewarded = false
@@ -44,6 +48,7 @@ class LiebnitzActivity : AppCompatActivity() {
                 try {
                     if (reward > 0) {
                         FirebaseWallet.addCredits(reward, "Liebnitz — $finalScore correct answers")
+                        SoundFx.coinEarned()
                         Toast.makeText(
                             this@LiebnitzActivity,
                             "Run over! +${String.format("%.2f", reward)} AFK (score $finalScore)",

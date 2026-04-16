@@ -19,6 +19,11 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.InputStream
 
+/**
+ * Afeka trivia quiz game.
+ * Loads 15 random questions from assets/questions.json, runs a 10-minute countdown,
+ * and awards 4 AFK for a perfect score of 15/15.
+ */
 class AfequizActivity : AppCompatActivity() {
 
     private lateinit var questionList: List<QuizQuestion>
@@ -78,7 +83,7 @@ class AfequizActivity : AppCompatActivity() {
         }
 
         val q = questionList[currentQuestionIndex]
-        findViewById<TextView>(R.id.tvProgress).text = "שאלה ${currentQuestionIndex + 1}/15"
+        findViewById<TextView>(R.id.tvProgress).text = "Question ${currentQuestionIndex + 1} / 15"
         findViewById<TextView>(R.id.tvQuestionText).text = q.text
 
         val shuffledOptions = q.options.shuffled()
@@ -97,9 +102,11 @@ class AfequizActivity : AppCompatActivity() {
             btn.setBackgroundColor(Color.GREEN)
             timeRemainingMillis += 10000
             startNewTimer(timeRemainingMillis)
+            SoundFx.success()
         } else {
             btn.setBackgroundColor(Color.RED)
             optionButtons.find { it.text == correct }?.setBackgroundColor(Color.GREEN)
+            SoundFx.error()
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -135,6 +142,7 @@ class AfequizActivity : AppCompatActivity() {
                     val quizReward = 4.00
                     FirebaseWallet.addCredits(quizReward, "Quiz reward (perfect score)")
                     withContext(Dispatchers.Main) {
+                        SoundFx.coinEarned()
                         Toast.makeText(this@AfequizActivity, "Congratulations! You earned +$quizReward AFK!", Toast.LENGTH_LONG).show()
                         navigateToResults()
                     }

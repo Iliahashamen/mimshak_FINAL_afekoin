@@ -44,4 +44,15 @@
         android:paddingBottom="16dp"
         android:clipToPadding="false" />
 
+    <TextView
+        android:id="@+id/tvEmptyHistory"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="No transactions yet.\nEarn coins in the games to see them here!"
+        android:textSize="15sp"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
+
 </LinearLayout>

@@ -1,8 +1,10 @@
 package com.example.mimshak_final_afekoin.data
 
 /**
- * נתוני משתמש ב-Firestore (מסמך תחת users/{uid}).
- * שיתוף מידע: אותו מסמך נקרא ללוח תוצאות; העדכונים נראים לכל המשתמשים המחוברים לפי חוקי האבטחה.
+ * Represents a user profile stored in Firestore under `users/{uid}`.
+ *
+ * The same document is read by all screens that need the balance or username,
+ * so any balance change is visible across the app in real time.
  */
 data class Profile(
     val id: String,

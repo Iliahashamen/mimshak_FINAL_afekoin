@@ -9,6 +9,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
+/**
+ * Hub screen for earning AFK coins.
+ * Asks whether the user is in class; if yes, games are locked until :45 to encourage focus.
+ */
 class EarnActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,18 +39,32 @@ class EarnActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnYesInClass).setOnClickListener {
+            SoundFx.click()
             layoutQuestion.visibility = View.GONE
             layoutEarnButtons.visibility = View.VISIBLE
             applyClassLock()
         }
 
         findViewById<Button>(R.id.btnNoNotInClass).setOnClickListener {
+            SoundFx.click()
             layoutQuestion.visibility = View.GONE
             layoutEarnButtons.visibility = View.VISIBLE
         }
 
-        btnAfequiz.setOnClickListener { startActivity(Intent(this, AfequizActivity::class.java)) }
-        btnAfekliker.setOnClickListener { startActivity(Intent(this, AfeklikerActivity::class.java)) }
-        btnLiebnitz.setOnClickListener { startActivity(Intent(this, LiebnitzActivity::class.java)) }
+        btnAfequiz.setOnClickListener {
+            SoundFx.click()
+            startActivity(Intent(this, AfequizActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
+        }
+        btnAfekliker.setOnClickListener {
+            SoundFx.click()
+            startActivity(Intent(this, AfeklikerActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
+        }
+        btnLiebnitz.setOnClickListener {
+            SoundFx.click()
+            startActivity(Intent(this, LiebnitzActivity::class.java))
+            overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
+        }
     }
 }

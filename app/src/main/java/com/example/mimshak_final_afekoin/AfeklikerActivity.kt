@@ -16,6 +16,11 @@ import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
+/**
+ * Tap-to-earn mini-game.
+ * The user has 10 seconds to tap the Afekoin logo as many times as possible.
+ * Reward is capped at 2.00 AFK (0.02 AFK per tap).
+ */
 class AfeklikerActivity : AppCompatActivity() {
 
     private var taps = 0
@@ -38,6 +43,7 @@ class AfeklikerActivity : AppCompatActivity() {
             if (claimed) return@setOnClickListener
             taps++
             tvTaps.text = "Taps: $taps"
+            SoundFx.click()
             animateTap(btnLogo)
         }
 
@@ -115,6 +121,7 @@ class AfeklikerActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 FirebaseWallet.addCredits(reward, "Afekliker — $taps taps")
+                SoundFx.coinEarned()
                 Toast.makeText(
                     this@AfeklikerActivity,
                     "+${String.format("%.2f", reward)} AFK earned!",

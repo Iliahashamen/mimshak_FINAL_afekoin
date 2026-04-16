@@ -6,8 +6,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 /**
- * פעולות ארנק (זיכוי, חיוב, העברה) מול Firestore.
- * העברות כוללות שני מסמכי תנועה — שיתוף מידע בין משתמשים דרך אותו אוסף.
+ * Wallet operations (credit, charge, transfer) backed by Firestore.
+ *
+ * Every balance change is wrapped in a Firestore transaction to prevent
+ * race conditions, and a corresponding ledger document is written to the
+ * shared [FirestorePaths.TRANSACTIONS] collection so any user can read
+ * their own history in real time.
  */
 object FirebaseWallet {
 

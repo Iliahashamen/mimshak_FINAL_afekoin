@@ -2,7 +2,7 @@ package com.example.mimshak_final_afekoin.data
 
 import com.google.firebase.Timestamp
 
-/** רשומת תנועה באוסף transactions ב-Firestore */
+/** A single transaction row from the Firestore `transactions` collection. */
 data class LedgerEntry(
     val id: String,
     val userId: String,

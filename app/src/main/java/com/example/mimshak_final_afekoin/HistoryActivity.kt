@@ -2,7 +2,9 @@ package com.example.mimshak_final_afekoin
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +14,7 @@ import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-/** היסטוריית תנועות — נקראת מ-Firestore (שיתוף/אחסון מרכזי). */
+/** Displays the signed-in user's full transaction history loaded from Firestore. */
 class HistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +24,7 @@ class HistoryActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
         val rv = findViewById<RecyclerView>(R.id.rvTransactions)
+        val tvEmpty = findViewById<TextView>(R.id.tvEmptyHistory)
         rv.layoutManager = LinearLayoutManager(this)
 
         lifecycleScope.launch {
@@ -35,15 +38,23 @@ class HistoryActivity : AppCompatActivity() {
                     return@launch
                 }
                 val rows = UserRepository.transactionsForUser(uid)
-                rv.adapter = HistoryAdapter(rows)
+                if (rows.isEmpty()) {
+                    rv.visibility = View.GONE
+                    tvEmpty.visibility = View.VISIBLE
+                } else {
+                    rv.visibility = View.VISIBLE
+                    tvEmpty.visibility = View.GONE
+                    rv.adapter = HistoryAdapter(rows)
+                }
             } catch (e: Exception) {
-                val msg = e.message ?: ""
                 Toast.makeText(
                     this@HistoryActivity,
-                    "Could not load history. If this mentions an index, create it in the Firebase console link from the log.\n$msg",
+                    "Could not load history: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
-                rv.adapter = HistoryAdapter(emptyList())
+                rv.visibility = View.GONE
+                tvEmpty.visibility = View.VISIBLE
+                tvEmpty.text = "Could not load transactions.\nCheck your internet connection and try again."
             }
         }
     }

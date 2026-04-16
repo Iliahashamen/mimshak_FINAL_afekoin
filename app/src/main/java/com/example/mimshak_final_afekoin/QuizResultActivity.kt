@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/** Shows the Afequiz final score and the user's updated AFK balance. */
 class QuizResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
