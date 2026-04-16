@@ -52,7 +52,7 @@ class LiebnitzGameView @JvmOverloads constructor(
     }
 
     private val pTextWrong = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#FFE0E0")
+        color = Color.BLACK
         textAlign = Paint.Align.CENTER
         typeface = Typeface.MONOSPACE
         isFakeBoldText = true
@@ -154,9 +154,9 @@ class LiebnitzGameView @JvmOverloads constructor(
                 if (pod.isCorrect) {
                     scoreInt++
                     onScoreChanged?.invoke(scoreInt, equationText)
-                    iter.remove()
                     pods.clear()
                     waveActive = false
+                    return  // exit tick() immediately — iterator is now invalid
                 } else {
                     running = false
                     removeCallbacks(loop)
