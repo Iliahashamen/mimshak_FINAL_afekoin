@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.example.mimshak_final_afekoin.data.Profile
 import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
