@@ -77,11 +77,11 @@ class MainActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                var profile = UserRepository.getProfile(user.uid)
+                var profile = UserRepository.getProfile(user.uid, forceServer = true)
                 if (profile == null && user.email != null) {
                     val uname = user.email!!.substringBefore('@').lowercase()
                     UserRepository.createUserDocument(user.uid, uname)
-                    profile = UserRepository.getProfile(user.uid)
+                    profile = UserRepository.getProfile(user.uid, forceServer = true)
                 }
                 if (profile != null) {
                     currentUserProfile = profile
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             if (granted) {
                 // Reload balance after bonus
                 val user = auth.currentUser ?: return
-                currentUserProfile = UserRepository.getProfile(user.uid) ?: currentUserProfile
+                currentUserProfile = UserRepository.getProfile(user.uid, forceServer = true) ?: currentUserProfile
                 updateUI()
                 Toast.makeText(
                     this,

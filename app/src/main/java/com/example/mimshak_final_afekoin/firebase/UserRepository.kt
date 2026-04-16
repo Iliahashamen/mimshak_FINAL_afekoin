@@ -5,6 +5,7 @@ import com.example.mimshak_final_afekoin.data.LedgerEntry
 import com.example.mimshak_final_afekoin.data.Profile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
@@ -28,8 +29,13 @@ object UserRepository {
         )
     }
 
-    suspend fun getProfile(uid: String): Profile? {
-        val snap = db.collection(FirestorePaths.USERS).document(uid).get().await()
+    /**
+     * Fetches the user profile. Pass [forceServer] = true after a balance-changing
+     * operation to bypass Firestore's local cache and get the real updated value.
+     */
+    suspend fun getProfile(uid: String, forceServer: Boolean = false): Profile? {
+        val source = if (forceServer) Source.SERVER else Source.DEFAULT
+        val snap = db.collection(FirestorePaths.USERS).document(uid).get(source).await()
         return docToProfile(snap)
     }
 

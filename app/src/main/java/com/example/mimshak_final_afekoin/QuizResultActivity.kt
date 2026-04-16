@@ -27,7 +27,7 @@ class QuizResultActivity : AppCompatActivity() {
             try {
                 val uid = FirebaseAuth.getInstance().currentUser?.uid
                 val balText = if (uid != null) {
-                    val p = UserRepository.getProfile(uid)
+                    val p = UserRepository.getProfile(uid, forceServer = true)
                     if (p != null) "Balance: ${String.format("%.2f", p.balance)} AFK"
                     else "Balance unavailable"
                 } else {

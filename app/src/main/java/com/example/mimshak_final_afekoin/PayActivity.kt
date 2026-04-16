@@ -54,7 +54,7 @@ class PayActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
-                val profile = UserRepository.getProfile(uid)
+                val profile = UserRepository.getProfile(uid, forceServer = true)
                 tvBalance.text = String.format("%.2f AFK", profile?.balance ?: 0.0)
             } catch (_: Exception) {
                 tvBalance.text = "—"
