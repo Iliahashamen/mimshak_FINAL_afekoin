@@ -19,11 +19,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.InputStream
 
-/**
- * Afeka trivia quiz game.
- * Loads 15 random questions from assets/questions.json, runs a 10-minute countdown,
- * and awards 4 AFK for a perfect score of 15/15.
- */
+// Quiz game: 15 random questions from questions.json, 10 min timer, 1 AFK per correct answer
 class AfequizActivity : AppCompatActivity() {
 
     private lateinit var questionList: List<QuizQuestion>

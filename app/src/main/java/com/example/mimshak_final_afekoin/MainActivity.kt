@@ -19,10 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-/**
- * Main screen: loads user profile from Firestore, shows balance, handles
- * profile photo upload (Firebase Storage), daily bonus, and sign-out.
- */
+// Home screen: shows balance, photo, daily bonus popup, and logout
 class MainActivity : AppCompatActivity() {
 
     private val auth get() = FirebaseAuth.getInstance()
@@ -111,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         } catch (_: Exception) {
-            // Bonus check failure is non-critical, silently ignore
+            // ignore if bonus check fails
         }
     }
 

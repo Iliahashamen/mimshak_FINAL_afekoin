@@ -5,14 +5,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-/**
- * Wallet operations (credit, charge, transfer) backed by Firestore.
- *
- * Every balance change is wrapped in a Firestore transaction to prevent
- * race conditions, and a corresponding ledger document is written to the
- * shared [FirestorePaths.TRANSACTIONS] collection so any user can read
- * their own history in real time.
- */
+// Handles all balance changes (add/charge/transfer) using Firestore transactions
 object FirebaseWallet {
 
     private val auth get() = FirebaseAuth.getInstance()
@@ -58,10 +51,7 @@ object FirebaseWallet {
         logTransaction(uid, description, -amount)
     }
 
-    /**
-     * Daily login bonus: adds 5 AFK once per calendar day.
-     * Returns true if the bonus was granted, false if already collected today.
-     */
+    // +5 AFK once per day; returns true if actually granted
     suspend fun checkAndGrantDailyBonus(): Boolean {
         val uid = auth.currentUser?.uid ?: return false
         val ref = db.collection(FirestorePaths.USERS).document(uid)

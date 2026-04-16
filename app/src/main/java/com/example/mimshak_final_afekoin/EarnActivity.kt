@@ -9,10 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
-/**
- * Hub screen for earning AFK coins.
- * Asks whether the user is in class; if yes, games are locked until :45 to encourage focus.
- */
+// Pick a game to earn coins. Games lock until :45 if user is in class.
 class EarnActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

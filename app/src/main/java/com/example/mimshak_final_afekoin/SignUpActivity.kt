@@ -52,7 +52,7 @@ class SignUpActivity : AppCompatActivity() {
         val password = etPassword.text.toString()
         val confirm  = etConfirm.text.toString()
 
-        // ── Validation ───────────────────────────────────────────────────────
+        // validate inputs
         if (username.isBlank()) {
             etUsername.error = "Username is required"
             etUsername.requestFocus()

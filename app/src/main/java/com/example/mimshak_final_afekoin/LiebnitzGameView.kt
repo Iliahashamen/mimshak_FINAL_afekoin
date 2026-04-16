@@ -11,21 +11,14 @@ import android.view.View
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-/**
- * Retro pixel-art spaceship math game.
- * - An equation is shown in the HUD above
- * - Three pixel blocks fall, each with a number — only one is the correct answer
- * - Player steers the ship (tap left / right of screen) into the correct lane
- * - Correct hit → score +1, next wave; wrong hit or missed correct block → game over
- *
- * All BlurMaskFilter usage removed (crash source); rendering is hardware-accelerated safe.
- */
+// Custom game view: tap left/right to steer the ship into the right answer block
+// (BlurMaskFilter was crashing so everything is drawn with simple rects)
 class LiebnitzGameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    // ── Retro palette ─────────────────────────────────────────────────────────
+    // colors
     private val CLR_BG      = Color.parseColor("#000000")
     private val CLR_GRID    = Color.parseColor("#0A1A0A")
     private val CLR_CORRECT = Color.parseColor("#00FF41")   // Matrix green
@@ -35,7 +28,7 @@ class LiebnitzGameView @JvmOverloads constructor(
     private val CLR_STAR    = Color.parseColor("#FFFFFF")
     private val CLR_SCANLINE = Color.parseColor("#0A000000")
 
-    // ── Paints (no ANTI_ALIAS for crisp pixel look) ──────────────────────────
+    // paints (no ANTI_ALIAS = crisp pixel look)
     private val pBg      = Paint().apply { color = CLR_BG }
     private val pGrid    = Paint().apply { color = CLR_GRID; strokeWidth = 1f }
     private val pCorrect = Paint().apply { color = CLR_CORRECT }
@@ -65,7 +58,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
-    // ── Game state ────────────────────────────────────────────────────────────
+    // game state
     private var running    = true
     private var playerLane = 1
     private var scoreInt   = 0
@@ -101,7 +94,7 @@ class LiebnitzGameView @JvmOverloads constructor(
     var onScoreChanged: ((Int, String) -> Unit)? = null
     var onCrash: ((Int) -> Unit)? = null
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    // game loop
     private val loop = object : Runnable {
         override fun run() {
             if (!running || width == 0) return
@@ -122,7 +115,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    // ── Tick ──────────────────────────────────────────────────────────────────
+    // called each frame
     private fun tick() {
         if (width == 0) return
         initStars()
@@ -185,7 +178,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
-    // ── Touch ─────────────────────────────────────────────────────────────────
+    // touch input
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!running) return false
         if (event.action == MotionEvent.ACTION_DOWN) {
@@ -199,7 +192,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    // ── Draw ──────────────────────────────────────────────────────────────────
+    // drawing
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val w = width.toFloat()
@@ -307,7 +300,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
-    // ── Spawn / equations ─────────────────────────────────────────────────────
+    // spawn a new wave of pods with an equation
     private fun spawnWave() {
         val correctLane = Random.nextInt(3)
         val (eq, ans) = generateEquation()
@@ -345,7 +338,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         return wrongs.toList()
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // helpers
     private fun initStars() {
         if (starsInit || width == 0) return
         repeat(40) {
