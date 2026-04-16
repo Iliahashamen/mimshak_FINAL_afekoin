@@ -43,7 +43,7 @@ class AfeklikerActivity : AppCompatActivity() {
             if (claimed) return@setOnClickListener
             taps++
             tvTaps.text = "Taps: $taps"
-            SoundFx.click()
+            SoundFx.tapGame()
             animateTap(btnLogo)
         }
 

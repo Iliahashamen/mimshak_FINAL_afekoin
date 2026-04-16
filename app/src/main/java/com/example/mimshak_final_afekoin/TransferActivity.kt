@@ -29,7 +29,7 @@ class TransferActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     FirebaseWallet.transferToUsername(username, amount)
-                    SoundFx.success()
+                    SoundFx.transfer()
                     Toast.makeText(this@TransferActivity, "Transfer sent!", Toast.LENGTH_LONG).show()
                     finish()
                 } catch (e: Exception) {

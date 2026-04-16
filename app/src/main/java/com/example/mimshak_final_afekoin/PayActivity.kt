@@ -26,7 +26,7 @@ class PayActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     FirebaseWallet.charge(amount, "Store: $label")
-                    SoundFx.success()
+                    SoundFx.purchase()
                     Toast.makeText(
                         this@PayActivity,
                         "✓ Purchased $label! Check History to see the transaction.",

@@ -114,11 +114,10 @@ class AfequizActivity : AppCompatActivity() {
             score++
             timeRemainingMillis += 10_000L
             startNewTimer(timeRemainingMillis)
-            SoundFx.success()
+            SoundFx.quizCorrect()
         } else {
             btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorRed)
             btn.setTextColor(getColor(R.color.white))
-            // Highlight the correct button
             optionButtons.find { b ->
                 val rawText = b.text.toString().substringAfter("   ")
                 rawText == correct
@@ -126,7 +125,7 @@ class AfequizActivity : AppCompatActivity() {
                 correct_btn.backgroundTintList = android.content.res.ColorStateList.valueOf(colorGreen)
                 correct_btn.setTextColor(getColor(R.color.bg_primary))
             }
-            SoundFx.error()
+            SoundFx.quizWrong()
         }
 
         Handler(Looper.getMainLooper()).postDelayed({

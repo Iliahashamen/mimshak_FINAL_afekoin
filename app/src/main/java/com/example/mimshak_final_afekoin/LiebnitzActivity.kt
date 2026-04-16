@@ -30,6 +30,7 @@ class LiebnitzActivity : AppCompatActivity() {
             runOnUiThread {
                 tvScore.text = "SCORE: $score"
                 if (equation.isNotBlank()) tvEquation.text = equation
+                if (score > 0) SoundFx.gameHit()
             }
         }
 
@@ -40,6 +41,7 @@ class LiebnitzActivity : AppCompatActivity() {
             val reward = min(5.0, finalScore * 0.1)
 
             runOnUiThread {
+                SoundFx.gameDeath()
                 tvEquation.text = "CRASH!"
                 tvEquation.setTextColor(getColor(R.color.accent_red))
             }
