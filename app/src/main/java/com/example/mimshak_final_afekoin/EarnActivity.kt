@@ -51,16 +51,19 @@ class EarnActivity : AppCompatActivity() {
         btnAfequiz.setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, AfequizActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
         btnAfekliker.setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, AfeklikerActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
         btnLiebnitz.setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, LiebnitzActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
     }

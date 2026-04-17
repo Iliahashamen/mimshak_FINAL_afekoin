@@ -29,7 +29,7 @@ class PayActivity : AppCompatActivity() {
                     SoundFx.purchase()
                     Toast.makeText(
                         this@PayActivity,
-                        "✓ Purchased $label! Check History to see the transaction.",
+                        "Purchased $label! Check History for the transaction.",
                         Toast.LENGTH_LONG
                     ).show()
                     loadBalance()
@@ -44,9 +44,19 @@ class PayActivity : AppCompatActivity() {
             }
         }
 
+        // Everyday
+        findViewById<Button>(R.id.btnBuyPrint).setOnClickListener    { buy(50.0,   "Print credit") }
+        findViewById<Button>(R.id.btnBuyCoffee).setOnClickListener   { buy(100.0,  "Coffee voucher") }
+        findViewById<Button>(R.id.btnBuyLunch).setOnClickListener    { buy(200.0,  "Campus lunch") }
+
+        // Campus Gear
+        findViewById<Button>(R.id.btnBuyUsb).setOnClickListener      { buy(800.0,  "USB flash drive") }
         findViewById<Button>(R.id.btnBuyNotebook).setOnClickListener { buy(1300.0, "Notebook") }
-        findViewById<Button>(R.id.btnBuyCoffee).setOnClickListener { buy(100.0, "Coffee voucher") }
-        findViewById<Button>(R.id.btnBuyHoodie).setOnClickListener { buy(5000.0, "Afeka hoodie") }
+
+        // Merchandise
+        findViewById<Button>(R.id.btnBuyTshirt).setOnClickListener   { buy(2500.0, "Afeka T-shirt") }
+        findViewById<Button>(R.id.btnBuyHoodie).setOnClickListener   { buy(5000.0, "Afeka hoodie") }
+
         findViewById<Button>(R.id.btnPayBack).setOnClickListener { finish() }
     }
 
@@ -57,7 +67,7 @@ class PayActivity : AppCompatActivity() {
                 val profile = UserRepository.getProfile(uid, forceServer = true)
                 tvBalance.text = String.format("%.2f AFK", profile?.balance ?: 0.0)
             } catch (_: Exception) {
-                tvBalance.text = "—"
+                tvBalance.text = "--"
             }
         }
     }

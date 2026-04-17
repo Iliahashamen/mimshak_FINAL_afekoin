@@ -144,24 +144,28 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnEarn).setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, EarnActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<ImageButton>(R.id.btnHistory).setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, HistoryActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<Button>(R.id.btnPay).setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, PayActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 
         findViewById<Button>(R.id.btnTransfer).setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, TransferActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 

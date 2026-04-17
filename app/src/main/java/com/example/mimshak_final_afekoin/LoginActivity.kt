@@ -59,6 +59,7 @@ class LoginActivity : AppCompatActivity() {
         signUpButton.setOnClickListener {
             SoundFx.click()
             startActivity(Intent(this, SignUpActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(R.anim.slide_up, R.anim.fade_out)
         }
 

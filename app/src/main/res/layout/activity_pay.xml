@@ -38,7 +38,7 @@
             android:background="@drawable/bg_earn_card"
             android:padding="16dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="24dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -52,13 +52,24 @@
                 android:id="@+id/tvPayBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="…"
+                android:text="..."
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
         </LinearLayout>
 
-        <!-- Notebook item -->
+        <!-- Section: Everyday -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EVERYDAY"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:textColor="@color/accent_green"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Print Credit -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,7 +77,7 @@
             android:background="@drawable/bg_earn_card"
             android:padding="20dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -77,7 +88,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notebook"
+                    android:text="Print Credit"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary" />
@@ -85,24 +96,24 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Campus store item"
+                    android:text="Up to 20 pages at any campus printer"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary"
                     android:layout_marginTop="2dp" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/btnBuyNotebook"
+                android:id="@+id/btnBuyPrint"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="1,300 AFK"
+                android:text="50 AFK"
                 android:textSize="13sp"
-                android:backgroundTint="@color/accent_red"
-                android:textColor="@color/white"
+                android:backgroundTint="@color/accent_green"
+                android:textColor="@color/bg_primary"
                 app:cornerRadius="10dp" />
         </LinearLayout>
 
-        <!-- Coffee item -->
+        <!-- Coffee Voucher -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +121,7 @@
             android:background="@drawable/bg_earn_card"
             android:padding="20dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -141,12 +152,12 @@
                 android:layout_height="40dp"
                 android:text="100 AFK"
                 android:textSize="13sp"
-                android:backgroundTint="@color/accent_red"
-                android:textColor="@color/white"
+                android:backgroundTint="@color/accent_green"
+                android:textColor="@color/bg_primary"
                 app:cornerRadius="10dp" />
         </LinearLayout>
 
-        <!-- Hoodie item -->
+        <!-- Campus Lunch -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,7 +165,205 @@
             android:background="@drawable/bg_earn_card"
             android:padding="20dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="22dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Campus Lunch"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Meal voucher for the campus cafeteria"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBuyLunch"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="200 AFK"
+                android:textSize="13sp"
+                android:backgroundTint="@color/accent_green"
+                android:textColor="@color/bg_primary"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+        <!-- Section: Campus Gear -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CAMPUS GEAR"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:textColor="@color/accent_blue"
+            android:layout_marginBottom="10dp" />
+
+        <!-- USB Flash Drive -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_earn_card"
+            android:padding="20dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="USB Flash Drive"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="16 GB drive from the campus store"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBuyUsb"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="800 AFK"
+                android:textSize="13sp"
+                android:backgroundTint="@color/accent_blue"
+                android:textColor="@color/white"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+        <!-- Notebook -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_earn_card"
+            android:padding="20dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="22dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notebook"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ruled A5 notebook from campus store"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBuyNotebook"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="1,300 AFK"
+                android:textSize="13sp"
+                android:backgroundTint="@color/accent_blue"
+                android:textColor="@color/white"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+        <!-- Section: Merchandise -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MERCHANDISE"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:textColor="@color/accent_red"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Afeka T-Shirt -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_earn_card"
+            android:padding="20dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Afeka T-Shirt"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Official Afeka College T-shirt"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBuyTshirt"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="2,500 AFK"
+                android:textSize="13sp"
+                android:backgroundTint="@color/accent_red"
+                android:textColor="@color/white"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+        <!-- Afeka Hoodie -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_earn_card"
+            android:padding="20dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="28dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -173,7 +382,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Official campus merchandise"
+                    android:text="Premium campus merchandise"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary"
                     android:layout_marginTop="2dp" />
