@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-// Home screen: shows balance, photo, daily bonus popup, and logout
 class MainActivity : AppCompatActivity() {
 
     private val auth get() = FirebaseAuth.getInstance()

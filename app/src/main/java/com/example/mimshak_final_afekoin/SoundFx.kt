@@ -5,7 +5,6 @@ import android.media.ToneGenerator
 import android.os.Handler
 import android.os.Looper
 
-// Sound effects using ToneGenerator (no extra audio files needed)
 object SoundFx {
 
     private val handler = Handler(Looper.getMainLooper())

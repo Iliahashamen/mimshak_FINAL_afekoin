@@ -1,6 +1,6 @@
 # Afekoin — Campus Coin Wallet
 
-An Android wallet app for Afeka College students. Earn, spend, and transfer a virtual campus currency (AFK) through mini-games and a peer-to-peer transfer system. Built with **Kotlin** and **Firebase**.
+An Android wallet app for Afeka College students. Students earn a virtual campus currency (AFK) by playing mini-games, then spend it in a digital college store or transfer it to other students. Built entirely in **Kotlin** with **Firebase** as the backend.
 
 ---
 
@@ -8,18 +8,35 @@ An Android wallet app for Afeka College students. Earn, spend, and transfer a vi
 
 | Feature | Description |
 |---|---|
-| **Login / Sign-up** | Firebase Auth — email + password + custom username |
-| **Remember me** | Saves email between sessions |
+| **Login / Sign-up** | Firebase Auth — email + password, custom username chosen on registration |
+| **Remember me** | Saves email between app sessions |
 | **Forgot password** | Sends a reset email via Firebase |
-| **Daily bonus** | +5 AFK once per calendar day on login |
-| **Earn → Afequiz** | 15 random CS & Android trivia questions, +4 AFK for perfect score |
-| **Earn → Afekliker** | Tap the logo for 10 seconds, up to +2 AFK |
-| **Earn → Liebnitz** | Spaceship math runner, up to +5 AFK |
-| **Class lock** | Games locked for first 45 min of class if user says they're in class |
-| **College Store** | Spend AFK on Notebook (5), Coffee (3), Hoodie (25) |
-| **P2P Transfer** | Send AFK to any user by username |
+| **Daily bonus** | +5 AFK once per calendar day on first login |
+| **Earn → Afequiz** | 15 random CS & Android trivia questions, +1 AFK per correct answer |
+| **Earn → Afekliker** | Tap the logo as fast as you can for 10 seconds, up to +2 AFK |
+| **Earn → Liebnitz** | Spaceship math runner, up to +5 AFK per run |
+| **Class lock** | Games lock for the first 45 minutes of class if the student says they're in class |
+| **College Store** | Spend AFK on campus items (see store section below) |
+| **P2P Transfer** | Send AFK to any other user by username |
 | **Transaction History** | Full ledger of every coin earned and spent |
 | **Profile photo** | Upload from gallery, stored in Firebase Storage |
+
+---
+
+## College Store
+
+> **Note:** The AFK prices shown below are placeholders used for development and testing.
+> In a real deployment, the college administration would decide the actual redemption values and prices for each item based on their own policies.
+
+| Item | Dev price |
+|---|---|
+| Print Credit (20 pages) | 50 AFK |
+| Coffee Voucher | 100 AFK |
+| Campus Lunch | 200 AFK |
+| USB Flash Drive (16 GB) | 800 AFK |
+| Notebook | 1,300 AFK |
+| Afeka T-Shirt | 2,500 AFK |
+| Afeka Hoodie | 5,000 AFK |
 
 ---
 
@@ -40,7 +57,7 @@ An Android wallet app for Afeka College students. Earn, spend, and transfer a vi
 2. **Add your Firebase config**
    - Go to [Firebase Console](https://console.firebase.google.com) → your project → Project settings → Download `google-services.json`
    - Place the file at `app/google-services.json`
-   - (A template is provided at `app/google-services.json.example`)
+   - A template is provided at `app/google-services.json.example`
 
 3. **Enable Firebase services** in the console:
    - Authentication → Email/Password
@@ -56,8 +73,8 @@ An Android wallet app for Afeka College students. Earn, spend, and transfer a vi
 - **Language:** Kotlin 100%
 - **UI:** XML layouts, Material Components, ConstraintLayout
 - **Backend:** Firebase Auth, Firestore, Firebase Storage
-- **Architecture:** Single-activity-per-screen, coroutines for async, object-based repositories
-- **Animations:** Custom XML `anim/` transitions (slide-up, fade)
+- **Async:** Kotlin coroutines + `kotlinx-coroutines-play-services`
+- **Image loading:** Coil
 - **Sound:** Android `ToneGenerator` — no bundled audio files
 
 ---
@@ -67,25 +84,26 @@ An Android wallet app for Afeka College students. Earn, spend, and transfer a vi
 ```
 app/src/main/
 ├── java/com/example/mimshak_final_afekoin/
-│   ├── firebase/          # FirebaseWallet, UserRepository, FirestorePaths
-│   ├── data/              # Profile, LedgerEntry (data models)
-│   ├── MainActivity        # Home screen
-│   ├── LoginActivity       # Login + forgot password
-│   ├── SignUpActivity      # Registration
-│   ├── EarnActivity        # Game hub
-│   ├── AfequizActivity     # Trivia game
-│   ├── AfeklikerActivity   # Tap game
-│   ├── LiebnitzActivity    # Space runner host
-│   ├── LiebnitzGameView    # Custom game canvas view
-│   ├── PayActivity         # Campus store
-│   ├── TransferActivity    # P2P coin transfer
-│   ├── HistoryActivity     # Transaction history
-│   └── SoundFx             # Lightweight sound effects
+│   ├── firebase/           FirebaseWallet, UserRepository, FirestorePaths
+│   ├── data/               Profile, LedgerEntry
+│   ├── MainActivity        Home screen (balance, navigation)
+│   ├── LoginActivity       Login + forgot password
+│   ├── SignUpActivity      Registration (username + email + password)
+│   ├── EarnActivity        Game selection hub
+│   ├── AfequizActivity     Trivia quiz game
+│   ├── AfeklikerActivity   Tap game
+│   ├── LiebnitzActivity    Spaceship game host
+│   ├── LiebnitzGameView    Custom Canvas View for the spaceship game
+│   ├── PayActivity         College store
+│   ├── TransferActivity    P2P coin transfer
+│   ├── HistoryActivity     Transaction history list
+│   ├── HistoryAdapter      RecyclerView adapter for history
+│   └── SoundFx             ToneGenerator-based sound effects
 └── res/
-    ├── layout/             # All screen XMLs
-    ├── anim/               # Transition animations
-    ├── drawable/           # Shapes, gradients, icons
-    └── values/             # Colors, strings, themes
+    ├── layout/             Screen layouts (one XML per Activity)
+    ├── anim/               Slide + fade transitions
+    ├── drawable/           Shapes, gradients, icons
+    └── values/             Colors, strings, themes
 ```
 
 ---

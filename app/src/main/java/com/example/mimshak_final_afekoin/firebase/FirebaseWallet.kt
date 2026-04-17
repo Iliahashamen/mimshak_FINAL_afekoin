@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-// Handles all balance changes (add/charge/transfer) using Firestore transactions
 object FirebaseWallet {
 
     private val auth get() = FirebaseAuth.getInstance()

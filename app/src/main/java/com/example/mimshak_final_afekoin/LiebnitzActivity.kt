@@ -10,7 +10,6 @@ import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
-// Hosts the Liebnitz spaceship game and handles the coin reward on game over
 class LiebnitzActivity : AppCompatActivity() {
 
     private var rewarded = false

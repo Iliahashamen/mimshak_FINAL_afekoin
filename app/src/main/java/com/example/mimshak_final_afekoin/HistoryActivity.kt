@@ -14,7 +14,6 @@ import com.example.mimshak_final_afekoin.firebase.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-/** Displays the signed-in user's full transaction history loaded from Firestore. */
 class HistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

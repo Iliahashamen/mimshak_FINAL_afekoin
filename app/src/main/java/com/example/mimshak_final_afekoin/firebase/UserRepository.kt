@@ -9,7 +9,6 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
-// Fetches/stores user data from Firestore and Firebase Storage
 object UserRepository {
 
     private val auth get() = FirebaseAuth.getInstance()
@@ -26,14 +25,13 @@ object UserRepository {
         )
     }
 
-    // forceServer=true skips the local cache so balance is always up to date
+    // skip cache when we need the latest balance
     suspend fun getProfile(uid: String, forceServer: Boolean = false): Profile? {
         val source = if (forceServer) Source.SERVER else Source.DEFAULT
         val snap = db.collection(FirestorePaths.USERS).document(uid).get(source).await()
         return docToProfile(snap)
     }
 
-    // upload photo and save URL to user doc
     suspend fun uploadProfilePhoto(localUri: Uri): String {
         val uid = auth.currentUser?.uid ?: error("Not signed in")
         val ref = storage.reference.child("${FirestorePaths.PROFILE_IMAGES}/$uid.jpg")
@@ -61,7 +59,6 @@ object UserRepository {
             .sortedByDescending { it.createdAt?.seconds ?: 0L }
     }
 
-    // create the user doc in Firestore on first registration
     suspend fun createUserDocument(uid: String, username: String, startingBalance: Double = 30.0) {
         db.collection(FirestorePaths.USERS).document(uid).set(
             hashMapOf(

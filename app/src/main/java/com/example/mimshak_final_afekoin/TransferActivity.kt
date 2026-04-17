@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.mimshak_final_afekoin.firebase.FirebaseWallet
 import kotlinx.coroutines.launch
 
-/** Peer-to-peer AFK transfer screen. Sends coins to another user by username. */
 class TransferActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

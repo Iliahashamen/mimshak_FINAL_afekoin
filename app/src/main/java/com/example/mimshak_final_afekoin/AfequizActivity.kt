@@ -19,7 +19,6 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.InputStream
 
-// Quiz game: 15 random questions from questions.json, 10 min timer, 1 AFK per correct answer
 class AfequizActivity : AppCompatActivity() {
 
     private lateinit var questionList: List<QuizQuestion>

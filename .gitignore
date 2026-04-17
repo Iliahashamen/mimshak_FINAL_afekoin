@@ -19,3 +19,8 @@ app/google-services.json
 
 # Cursor IDE folder
 .cursor/
+
+# Dev/test scripts — not part of the app
+ai_user_test.py
+commit_msg.txt
+*.py

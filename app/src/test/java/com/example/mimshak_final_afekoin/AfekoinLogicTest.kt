@@ -4,14 +4,10 @@ import org.junit.Assert.*
 import org.junit.Test
 import kotlin.math.min
 
-/**
- * Unit tests for core game/store reward calculations and input validation.
- * These run on the JVM without a device or Firebase.
- */
+// Unit tests for reward calculations and input validation (no device or Firebase needed)
 class AfekoinLogicTest {
 
-    // ── Afekliker reward ──────────────────────────────────────────────────────
-
+    // Afekliker
     private fun afeklikerReward(taps: Int): Double = min(2.0, taps * 0.02)
 
     @Test fun afekliker_zeroTaps_givesZero() {
@@ -34,8 +30,7 @@ class AfekoinLogicTest {
         assertEquals(1.0, afeklikerReward(50), 0.001)
     }
 
-    // ── Afequiz reward ────────────────────────────────────────────────────────
-
+    // Afequiz
     private fun quizReward(correct: Int): Double = correct.toDouble()
 
     @Test fun quiz_0Correct_givesNoReward() {
@@ -50,8 +45,7 @@ class AfekoinLogicTest {
         assertEquals(7.0, quizReward(7), 0.001)
     }
 
-    // ── Liebnitz reward ───────────────────────────────────────────────────────
-
+    // Liebnitz
     private fun liebnitzReward(score: Int): Double = min(5.0, score * 0.1)
 
     @Test fun liebnitz_zeroScore_givesZero() {
@@ -70,26 +64,24 @@ class AfekoinLogicTest {
         assertEquals(1.0, liebnitzReward(10), 0.001)
     }
 
-    // ── Daily bonus ───────────────────────────────────────────────────────────
-
+    // Daily bonus
     @Test fun dailyBonus_isAlwaysFiveAfk() {
         val bonus = 5.0
         assertTrue("Daily bonus must be positive", bonus > 0)
         assertEquals(5.0, bonus, 0.001)
     }
 
-    // ── Store prices ──────────────────────────────────────────────────────────
-
+    // Store
     data class StoreItem(val name: String, val price: Double)
 
     private val storeItems = listOf(
-        StoreItem("Print credit",   50.0),
-        StoreItem("Coffee voucher", 100.0),
-        StoreItem("Campus lunch",   200.0),
-        StoreItem("USB flash drive",800.0),
-        StoreItem("Notebook",       1300.0),
-        StoreItem("Afeka T-shirt",  2500.0),
-        StoreItem("Afeka hoodie",   5000.0),
+        StoreItem("Print credit",    50.0),
+        StoreItem("Coffee voucher",  100.0),
+        StoreItem("Campus lunch",    200.0),
+        StoreItem("USB flash drive", 800.0),
+        StoreItem("Notebook",        1300.0),
+        StoreItem("Afeka T-shirt",   2500.0),
+        StoreItem("Afeka hoodie",    5000.0),
     )
 
     @Test fun store_allItemsHavePositivePrice() {
@@ -119,8 +111,7 @@ class AfekoinLogicTest {
         assertEquals(prices.sorted(), prices)
     }
 
-    // ── Username validation ───────────────────────────────────────────────────
-
+    // Username validation
     private val usernameRegex = Regex("^[a-z0-9_]{3,20}$")
 
     @Test fun username_validLowercase_passes() {
@@ -155,8 +146,7 @@ class AfekoinLogicTest {
         assertFalse(usernameRegex.matches("user@name"))
     }
 
-    // ── Transfer amount validation ────────────────────────────────────────────
-
+    // Transfer validation
     @Test fun transfer_positiveAmount_isValid() {
         assertTrue(10.0 > 0)
     }

@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
-// Pick a game to earn coins. Games lock until :45 if user is in class.
 class EarnActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
