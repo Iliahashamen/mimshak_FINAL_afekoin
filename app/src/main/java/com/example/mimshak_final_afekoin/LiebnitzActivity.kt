@@ -49,17 +49,9 @@ class LiebnitzActivity : AppCompatActivity() {
                     if (reward > 0) {
                         FirebaseWallet.addCredits(reward, "Liebnitz — $finalScore correct answers")
                         SoundFx.coinEarned()
-                        Toast.makeText(
-                            this@LiebnitzActivity,
-                            "Run over! +${String.format("%.2f", reward)} AFK (score $finalScore)",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        RewardCelebration.show(this@LiebnitzActivity, reward) { finish() }
                     } else {
-                        Toast.makeText(
-                            this@LiebnitzActivity,
-                            "No coins — answer at least one correctly next time!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        RewardCelebration.show(this@LiebnitzActivity, 0.0) { finish() }
                     }
                 } catch (e: Exception) {
                     Toast.makeText(
@@ -67,8 +59,8 @@ class LiebnitzActivity : AppCompatActivity() {
                         e.message ?: "Could not save reward",
                         Toast.LENGTH_LONG
                     ).show()
+                    finish()
                 }
-                finish()
             }
         }
 

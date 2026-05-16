@@ -113,8 +113,7 @@ class AfeklikerActivity : AppCompatActivity() {
         findViewById<ProgressBar>(R.id.timerProgress).progress = 0
 
         if (taps == 0) {
-            Toast.makeText(this, "No taps — no coins!", Toast.LENGTH_SHORT).show()
-            finish()
+            RewardCelebration.show(this, 0.0) { finish() }
             return
         }
         val reward = min(2.0, taps * 0.02)
@@ -122,15 +121,11 @@ class AfeklikerActivity : AppCompatActivity() {
             try {
                 FirebaseWallet.addCredits(reward, "Afekliker — $taps taps")
                 SoundFx.coinEarned()
-                Toast.makeText(
-                    this@AfeklikerActivity,
-                    "+${String.format("%.2f", reward)} AFK earned!",
-                    Toast.LENGTH_LONG
-                ).show()
+                RewardCelebration.show(this@AfeklikerActivity, reward) { finish() }
             } catch (e: Exception) {
                 Toast.makeText(this@AfeklikerActivity, e.message ?: "Save failed", Toast.LENGTH_LONG).show()
+                finish()
             }
-            finish()
         }
     }
 

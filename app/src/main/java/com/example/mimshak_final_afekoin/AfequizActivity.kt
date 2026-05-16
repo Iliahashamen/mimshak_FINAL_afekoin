@@ -157,12 +157,7 @@ class AfequizActivity : AppCompatActivity() {
                     FirebaseWallet.addCredits(reward, "Quiz — $score/15 correct")
                     withContext(Dispatchers.Main) {
                         SoundFx.coinEarned()
-                        Toast.makeText(
-                            this@AfequizActivity,
-                            "+${reward.toInt()} AFK earned ($score correct answers)!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        navigateToResults()
+                        RewardCelebration.show(this@AfequizActivity, reward) { navigateToResults() }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -176,7 +171,7 @@ class AfequizActivity : AppCompatActivity() {
                 }
             }
         } else {
-            navigateToResults()
+            RewardCelebration.show(this, 0.0) { navigateToResults() }
         }
     }
 
