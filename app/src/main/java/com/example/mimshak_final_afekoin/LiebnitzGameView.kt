@@ -18,7 +18,7 @@ class LiebnitzGameView @JvmOverloads constructor(
 
     private val CLR_BG       = Color.parseColor("#000000")
     private val CLR_GRID     = Color.parseColor("#0A1A0A")
-    private val CLR_CORRECT  = Color.parseColor("#00FF41")
+    private val CLR_POD      = Color.parseColor("#00D8FF")
     private val CLR_WRONG    = Color.parseColor("#FF2020")
     private val CLR_SHIP     = Color.parseColor("#00FF41")
     private val CLR_FLAME    = Color.parseColor("#FFB800")
@@ -27,7 +27,7 @@ class LiebnitzGameView @JvmOverloads constructor(
 
     private val pBg      = Paint().apply { color = CLR_BG }
     private val pGrid    = Paint().apply { color = CLR_GRID; strokeWidth = 1f }
-    private val pCorrect = Paint().apply { color = CLR_CORRECT }
+    private val pPod     = Paint().apply { color = CLR_POD }
     private val pWrong   = Paint().apply { color = CLR_WRONG }
     private val pShip    = Paint().apply { color = CLR_SHIP }
     private val pFlame   = Paint().apply { color = CLR_FLAME }
@@ -58,6 +58,9 @@ class LiebnitzGameView @JvmOverloads constructor(
     private var running    = true
     private var playerLane = 1
     private var scoreInt   = 0
+    private var livesInt   = 3
+    private var shakeFrames = 0
+    private var shakeOffsetX = 0f
 
     private data class Star(var x: Float, var y: Float, val size: Float, val speed: Float)
     private val stars    = mutableListOf<Star>()
@@ -86,7 +89,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         intArrayOf(0, 1, 0, 1, 0)
     )
 
-    var onScoreChanged: ((Int, String) -> Unit)? = null
+    var onScoreChanged: ((Int, String, Int) -> Unit)? = null
     var onCrash: ((Int) -> Unit)? = null
 
     private val loop = object : Runnable {
@@ -94,7 +97,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             if (!running || width == 0) return
             tick()
             invalidate()
-            postDelayed(this, 40L)   // ~25 fps
+            postDelayed(this, 34L)   // slightly faster than before
         }
     }
 
@@ -116,6 +119,12 @@ class LiebnitzGameView @JvmOverloads constructor(
         val h = height.toFloat()
         val w = width.toFloat()
         val laneW = w / 3f
+        if (shakeFrames > 0) {
+            shakeFrames--
+            shakeOffsetX = Random.nextFloat() * 24f - 12f
+        } else {
+            shakeOffsetX = 0f
+        }
 
         stars.forEach { s ->
             s.y += s.speed * (1f + scoreInt * 0.03f).coerceAtMost(3f)
@@ -127,7 +136,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             waveActive = true
         }
 
-        val baseSpeed = (h * 0.004f) * (1f + scoreInt * 0.04f).coerceAtMost(2.2f)
+        val baseSpeed = (h * 0.0045f) * (1f + scoreInt * 0.045f).coerceAtMost(2.35f)
         pods.forEach { it.y += it.speed * baseSpeed }
 
         val shipCx  = laneW * playerLane + laneW / 2f
@@ -146,23 +155,19 @@ class LiebnitzGameView @JvmOverloads constructor(
             if (dist < podHalf + laneW * 0.22f) {
                 if (pod.isCorrect) {
                     scoreInt++
-                    onScoreChanged?.invoke(scoreInt, equationText)
+                    onScoreChanged?.invoke(scoreInt, equationText, livesInt)
                     pods.clear()
                     waveActive = false
                     return
                 } else {
-                    running = false
-                    removeCallbacks(loop)
-                    onCrash?.invoke(scoreInt)
+                    handleMistake()
                     return
                 }
             }
 
             if (pod.y > h + 120f) {
                 if (pod.isCorrect) {
-                    running = false
-                    removeCallbacks(loop)
-                    onCrash?.invoke(scoreInt)
+                    handleMistake()
                     return
                 } else {
                     iter.remove()
@@ -189,6 +194,11 @@ class LiebnitzGameView @JvmOverloads constructor(
         val w = width.toFloat()
         val h = height.toFloat()
         val laneW = w / 3f
+
+        canvas.save()
+        if (shakeOffsetX != 0f) {
+            canvas.translate(shakeOffsetX, 0f)
+        }
 
         canvas.drawRect(0f, 0f, w, h, pBg)
 
@@ -217,6 +227,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             canvas.drawRect(0f, sy, w, sy + 1f, pScanline)
             sy += 4f
         }
+        canvas.restore()
     }
 
     private fun drawPixelBlock(canvas: Canvas, pod: Pod, laneW: Float) {
@@ -227,13 +238,11 @@ class LiebnitzGameView @JvmOverloads constructor(
         val right = cx + half
         val bot   = pod.y + half
 
-        val fill = if (pod.isCorrect) pCorrect else pWrong
-        canvas.drawRect(left, top, right, bot, fill)
-
-        pBorder.color = if (pod.isCorrect) Color.parseColor("#004020") else Color.parseColor("#400000")
+        // Keep all options visually identical so the correct answer is never hinted by color.
+        canvas.drawRect(left, top, right, bot, pPod)
+        pBorder.color = Color.parseColor("#004050")
         canvas.drawRect(left, top, right, bot, pBorder)
-
-        val textPaint = if (pod.isCorrect) pText else pTextWrong
+        val textPaint = pTextWrong
         textPaint.textSize = half * 0.9f
         canvas.drawText(pod.answer.toString(), cx, pod.y + textPaint.textSize * 0.36f, textPaint)
     }
@@ -292,7 +301,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             val answer = if (lane == correctLane) ans else wrongAnswers[wrongIdx++]
             pods.add(Pod(lane, -120f, answer, lane == correctLane, speed))
         }
-        onScoreChanged?.invoke(scoreInt, equationText)
+        onScoreChanged?.invoke(scoreInt, equationText, livesInt)
     }
 
     private fun generateEquation(): Pair<String, Int> {
@@ -334,15 +343,32 @@ class LiebnitzGameView @JvmOverloads constructor(
     fun resetGame() {
         pods.clear()
         scoreInt   = 0
+        livesInt   = 3
         playerLane = 1
         waveActive = false
         running    = true
+        shakeFrames = 0
+        shakeOffsetX = 0f
         starsInit  = false
         stars.clear()
         equationText = ""
-        onScoreChanged?.invoke(0, "")
+        onScoreChanged?.invoke(0, "", livesInt)
         removeCallbacks(loop)
         post(loop)
         invalidate()
+    }
+
+    private fun handleMistake() {
+        shakeFrames = 8
+        livesInt--
+        if (livesInt <= 0) {
+            running = false
+            removeCallbacks(loop)
+            onCrash?.invoke(scoreInt)
+            return
+        }
+        pods.clear()
+        waveActive = false
+        onScoreChanged?.invoke(scoreInt, equationText, livesInt)
     }
 }

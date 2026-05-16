@@ -56,6 +56,10 @@ class PayActivity : AppCompatActivity() {
         // Merchandise
         findViewById<Button>(R.id.btnBuyTshirt).setOnClickListener   { buy(2500.0, "Afeka T-shirt") }
         findViewById<Button>(R.id.btnBuyHoodie).setOnClickListener   { buy(5000.0, "Afeka hoodie") }
+        findViewById<Button>(R.id.btnBuyParkingPass).setOnClickListener { buy(350.0, "Daily parking pass") }
+        findViewById<Button>(R.id.btnBuyLabKit).setOnClickListener      { buy(650.0, "Lab kit refill") }
+        findViewById<Button>(R.id.btnBuyPowerBank).setOnClickListener   { buy(1800.0, "Power bank") }
+        findViewById<Button>(R.id.btnBuyMouse).setOnClickListener       { buy(2200.0, "Wireless mouse") }
 
         findViewById<Button>(R.id.btnPayBack).setOnClickListener { finish() }
     }

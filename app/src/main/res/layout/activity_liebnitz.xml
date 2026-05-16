@@ -39,6 +39,17 @@
                 android:textStyle="bold"
                 android:fontFamily="monospace" />
 
+            <TextView
+                android:id="@+id/tvLiebnitzLives"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:text="LIVES: 3"
+                android:textColor="#FFB800"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace" />
+
             <Button
                 android:id="@+id/btnLiebnitzExit"
                 android:layout_width="wrap_content"

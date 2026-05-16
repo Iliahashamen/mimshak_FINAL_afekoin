@@ -20,11 +20,13 @@ class LiebnitzActivity : AppCompatActivity() {
 
         val gameView  = findViewById<LiebnitzGameView>(R.id.liebnitzGameView)
         val tvScore   = findViewById<TextView>(R.id.tvLiebnitzScore)
+        val tvLives   = findViewById<TextView>(R.id.tvLiebnitzLives)
         val tvEquation = findViewById<TextView>(R.id.tvEquation)
 
-        gameView.onScoreChanged = { score, equation ->
+        gameView.onScoreChanged = { score, equation, lives ->
             runOnUiThread {
                 tvScore.text = "SCORE: $score"
+                tvLives.text = "LIVES: $lives"
                 if (equation.isNotBlank()) tvEquation.text = equation
                 if (score > 0) SoundFx.gameHit()
             }
