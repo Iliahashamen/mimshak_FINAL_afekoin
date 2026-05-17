@@ -29,6 +29,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etConfirm: EditText
     private lateinit var btnCreate: Button
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
@@ -46,6 +47,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    // signup flow
     private fun attemptSignUp() {
         val username = etUsername.text.toString().trim().lowercase()
         val email    = etEmail.text.toString().trim()
@@ -58,6 +60,7 @@ class SignUpActivity : AppCompatActivity() {
             etUsername.requestFocus()
             return
         }
+        // regex check
         if (!username.matches(Regex("^[a-z0-9_]{3,20}$"))) {
             etUsername.error = "3–20 characters: letters, numbers and _ only"
             etUsername.requestFocus()
@@ -79,12 +82,14 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
+        // create lock
         btnCreate.isEnabled = false
         btnCreate.text = "Creating…"
 
         lifecycleScope.launch {
             try {
                 // Check username is not already taken
+                // user check
                 val existing = db.collection(FirestorePaths.USERS)
                     .whereEqualTo("username", username)
                     .limit(1)
@@ -99,9 +104,11 @@ class SignUpActivity : AppCompatActivity() {
                 }
 
                 // Create Firebase Auth user
+                // auth create
                 val result = auth.createUserWithEmailAndPassword(email, password).await()
 
                 // Save profile with the custom username to Firestore
+                // doc create
                 UserRepository.createUserDocument(result.user!!.uid, username)
 
                 Toast.makeText(
@@ -111,6 +118,7 @@ class SignUpActivity : AppCompatActivity() {
                 ).show()
 
                 // Go straight to main screen
+                // main route
                 startActivity(
                     Intent(this@SignUpActivity, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -128,6 +136,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    // ui reset
     private fun resetButton() {
         btnCreate.isEnabled = true
         btnCreate.text = "CREATE ACCOUNT"

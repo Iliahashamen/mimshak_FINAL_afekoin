@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class TransferActivity : AppCompatActivity() {
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
@@ -18,6 +19,7 @@ class TransferActivity : AppCompatActivity() {
         val etUser = findViewById<EditText>(R.id.etTransferUsername)
         val etAmount = findViewById<EditText>(R.id.etTransferAmount)
 
+        // send validate
         findViewById<Button>(R.id.btnSendTransfer).setOnClickListener {
             val username = etUser.text.toString().trim()
             val amount = etAmount.text.toString().toDoubleOrNull()
@@ -25,6 +27,7 @@ class TransferActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter a username and a positive amount.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            // transfer call
             lifecycleScope.launch {
                 try {
                     FirebaseWallet.transferToUsername(username, amount)

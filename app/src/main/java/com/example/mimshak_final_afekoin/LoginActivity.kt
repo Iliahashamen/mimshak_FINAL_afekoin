@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var signUpButton: Button
     private lateinit var tvForgotPassword: TextView
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -42,12 +43,14 @@ class LoginActivity : AppCompatActivity() {
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
         // Auto-navigate if already signed in
+        // session check
         if (auth.currentUser != null) {
             navigateToMain()
             return
         }
 
         // Pre-fill remembered email
+        // email restore
         val savedEmail = prefs.getString(KEY_EMAIL, null)
         if (!savedEmail.isNullOrBlank()) {
             emailEditText.setText(savedEmail)
@@ -66,10 +69,12 @@ class LoginActivity : AppCompatActivity() {
         tvForgotPassword.setOnClickListener { SoundFx.click(); handleForgotPassword() }
     }
 
+    // login submit
     private fun handleLogin() {
         val email    = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
+        // input guard
         if (email.isBlank() || password.isBlank()) {
             Toast.makeText(this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show()
             return
@@ -78,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
         loginButton.isEnabled  = false
         loginButton.text = "Signing in…"
 
+        // auth call
         lifecycleScope.launch {
             try {
                 auth.signInWithEmailAndPassword(email, password).await()
@@ -95,8 +101,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // reset send
     private fun handleForgotPassword() {
         val email = emailEditText.text.toString().trim()
+        // input guard
         if (email.isBlank()) {
             Toast.makeText(this, "Enter your email first, then tap Forgot password", Toast.LENGTH_SHORT).show()
             return
@@ -119,6 +127,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // email persist
     private fun saveRememberMe(email: String) {
         prefs.edit().apply {
             if (checkRememberMe.isChecked) putString(KEY_EMAIL, email) else remove(KEY_EMAIL)
@@ -126,6 +135,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // home route
     private fun navigateToMain() {
         startActivity(
             Intent(this, MainActivity::class.java).apply {

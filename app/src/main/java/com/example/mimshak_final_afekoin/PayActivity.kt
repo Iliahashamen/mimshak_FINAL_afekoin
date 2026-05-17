@@ -15,6 +15,7 @@ class PayActivity : AppCompatActivity() {
 
     private lateinit var tvBalance: TextView
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pay)
@@ -22,6 +23,7 @@ class PayActivity : AppCompatActivity() {
         tvBalance = findViewById(R.id.tvPayBalance)
         loadBalance()
 
+        // buy helper
         fun buy(amount: Double, label: String) {
             lifecycleScope.launch {
                 try {
@@ -64,6 +66,7 @@ class PayActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnPayBack).setOnClickListener { finish() }
     }
 
+    // balance load
     private fun loadBalance() {
         lifecycleScope.launch {
             try {

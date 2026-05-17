@@ -14,6 +14,7 @@ class LiebnitzActivity : AppCompatActivity() {
 
     private var rewarded = false
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liebnitz)
@@ -23,6 +24,7 @@ class LiebnitzActivity : AppCompatActivity() {
         val tvLives   = findViewById<TextView>(R.id.tvLiebnitzLives)
         val tvEquation = findViewById<TextView>(R.id.tvEquation)
 
+        // hud update
         gameView.onScoreChanged = { score, equation, lives ->
             runOnUiThread {
                 tvScore.text = "SCORE: $score"
@@ -32,10 +34,12 @@ class LiebnitzActivity : AppCompatActivity() {
             }
         }
 
+        // crash handle
         gameView.onCrash = callback@{ finalScore ->
             if (rewarded) return@callback
             rewarded = true
 
+            // reward calc
             val reward = min(5.0, finalScore * 0.1)
 
             runOnUiThread {
@@ -44,6 +48,7 @@ class LiebnitzActivity : AppCompatActivity() {
                 tvEquation.setTextColor(getColor(R.color.accent_red))
             }
 
+            // reward save
             lifecycleScope.launch {
                 try {
                     if (reward > 0) {

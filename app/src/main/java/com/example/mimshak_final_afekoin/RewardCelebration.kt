@@ -17,6 +17,7 @@ import kotlin.random.Random
 
 object RewardCelebration {
 
+    // overlay show
     fun show(activity: AppCompatActivity, reward: Double, onDone: () -> Unit) {
         if (activity.isFinishing || activity.isDestroyed) {
             onDone()
@@ -85,6 +86,7 @@ object RewardCelebration {
         dialog.setContentView(root)
         dialog.show()
 
+        // spark burst
         repeat(22) { idx ->
             val spark = View(activity).apply {
                 setBackgroundColor(
@@ -117,6 +119,7 @@ object RewardCelebration {
             }
         }
 
+        // auto close
         root.postDelayed({
             if (dialog.isShowing) dialog.dismiss()
             onDone()

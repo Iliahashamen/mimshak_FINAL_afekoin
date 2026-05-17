@@ -27,6 +27,7 @@ class AfeklikerActivity : AppCompatActivity() {
     private var timer: CountDownTimer? = null
     private var claimed = false
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_afekliker)
@@ -47,6 +48,7 @@ class AfeklikerActivity : AppCompatActivity() {
             animateTap(btnLogo)
         }
 
+        // timer start
         timer = object : CountDownTimer(10_000L, 250L) {
             override fun onTick(millisUntilFinished: Long) {
                 if (claimed) return
@@ -73,6 +75,7 @@ class AfeklikerActivity : AppCompatActivity() {
         }
     }
 
+    // tap pulse
     private fun animateTap(view: ImageButton) {
         val scaleDown = AnimatorSet().apply {
             playTogether(
@@ -101,6 +104,7 @@ class AfeklikerActivity : AppCompatActivity() {
         }.start()
     }
 
+    // reward claim
     private fun claimReward() {
         if (claimed) return
         claimed = true
@@ -112,10 +116,12 @@ class AfeklikerActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvAfeklikerTimer).text = "0:00"
         findViewById<ProgressBar>(R.id.timerProgress).progress = 0
 
+        // zero reward
         if (taps == 0) {
             RewardCelebration.show(this, 0.0) { finish() }
             return
         }
+        // reward calc
         val reward = min(2.0, taps * 0.02)
         lifecycleScope.launch {
             try {

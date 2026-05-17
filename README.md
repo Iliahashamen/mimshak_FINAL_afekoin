@@ -14,7 +14,8 @@ An Android wallet app for Afeka College students. Students earn a virtual campus
 | **Daily bonus** | +5 AFK once per calendar day on first login |
 | **Earn → Afequiz** | 15 random CS & Android trivia questions, +1 AFK per correct answer |
 | **Earn → Afekliker** | Tap the logo as fast as you can for 10 seconds, up to +2 AFK |
-| **Earn → Liebnitz** | Spaceship math runner, up to +5 AFK per run |
+| **Earn → Liebnitz** | Spaceship math runner (3 lives + shake feedback), up to +5 AFK per run |
+| **Post-game celebration** | 2-second reward overlay with bright colors + fireworks animation |
 | **Class lock** | Games lock for the first 45 minutes of class if the student says they're in class |
 | **College Store** | Spend AFK on campus items (see store section below) |
 | **P2P Transfer** | Send AFK to any other user by username |
@@ -37,6 +38,10 @@ An Android wallet app for Afeka College students. Students earn a virtual campus
 | Notebook | 1,300 AFK |
 | Afeka T-Shirt | 2,500 AFK |
 | Afeka Hoodie | 5,000 AFK |
+| Daily Parking Pass | 350 AFK |
+| Lab Kit Refill | 650 AFK |
+| Power Bank | 1,800 AFK |
+| Wireless Mouse | 2,200 AFK |
 
 ---
 

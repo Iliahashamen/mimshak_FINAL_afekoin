@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnEye: ImageButton
     private lateinit var ivProfileAvatar: ImageView
 
+    // image pick
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri == null) return@registerForActivityResult
         lifecycleScope.launch {
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -59,20 +61,24 @@ class MainActivity : AppCompatActivity() {
         setupButtons()
     }
 
+    // resume refresh
     override fun onResume() {
         super.onResume()
         fetchUserProfile()
     }
 
+    // profile fetch
     private fun fetchUserProfile() {
         lifecycleScope.launch {
             try {
+                // auth guard
                 val user = auth.currentUser
                 if (user == null) {
                     goToLogin()
                     return@launch
                 }
 
+                // doc fallback
                 var profile = UserRepository.getProfile(user.uid, forceServer = true)
                 if (profile == null && user.email != null) {
                     val uname = user.email!!.substringBefore('@').lowercase()
@@ -82,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 if (profile != null) {
                     currentUserProfile = profile
                     updateUI()
+                    // bonus check
                     checkDailyBonus()
                 } else {
                     Toast.makeText(this@MainActivity, "Could not load user profile.", Toast.LENGTH_SHORT).show()
@@ -92,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // bonus apply
     private suspend fun checkDailyBonus() {
         try {
             val granted = FirebaseWallet.checkAndGrantDailyBonus()
@@ -111,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ui render
     private fun updateUI() {
         currentUserProfile?.let { p ->
             tvGreeting.text = "${getGreetingPrefix()}, ${p.username.uppercase()}!"
@@ -123,6 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // balance draw
     private fun updateBalanceDisplay() {
         if (isHidden) {
             tvBalance.text = "••••"
@@ -133,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // click wiring
     private fun setupButtons() {
         btnEye.setOnClickListener {
             SoundFx.click()
@@ -174,6 +185,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // signout prompt
     private fun confirmSignOut() {
         AlertDialog.Builder(this)
             .setTitle("Sign out")
@@ -186,12 +198,14 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    // login route
     private fun goToLogin() {
         startActivity(Intent(this, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
 
+    // greet choose
     private fun getGreetingPrefix(): String {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         return when (hour) {

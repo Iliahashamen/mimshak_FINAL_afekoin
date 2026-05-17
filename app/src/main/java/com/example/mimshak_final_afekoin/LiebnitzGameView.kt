@@ -92,6 +92,7 @@ class LiebnitzGameView @JvmOverloads constructor(
     var onScoreChanged: ((Int, String, Int) -> Unit)? = null
     var onCrash: ((Int) -> Unit)? = null
 
+    // game loop
     private val loop = object : Runnable {
         override fun run() {
             if (!running || width == 0) return
@@ -112,6 +113,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
+    // tick update
     private fun tick() {
         if (width == 0) return
         initStars()
@@ -119,6 +121,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         val h = height.toFloat()
         val w = width.toFloat()
         val laneW = w / 3f
+        // shake apply
         if (shakeFrames > 0) {
             shakeFrames--
             shakeOffsetX = Random.nextFloat() * 24f - 12f
@@ -131,6 +134,7 @@ class LiebnitzGameView @JvmOverloads constructor(
             if (s.y > h) s.y = 0f
         }
 
+        // wave spawn
         if (!waveActive && pods.isEmpty()) {
             spawnWave()
             waveActive = true
@@ -143,6 +147,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         val shipMidY = h * 0.85f
 
         val iter = pods.iterator()
+        // hit check
         while (iter.hasNext()) {
             val pod = iter.next()
             val podCx   = laneW * pod.lane + laneW / 2f
@@ -176,6 +181,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
+    // touch steer
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!running) return false
         if (event.action == MotionEvent.ACTION_DOWN) {
@@ -189,6 +195,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
+    // frame draw
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val w = width.toFloat()
@@ -230,6 +237,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         canvas.restore()
     }
 
+    // pod draw
     private fun drawPixelBlock(canvas: Canvas, pod: Pod, laneW: Float) {
         val cx    = laneW * pod.lane + laneW / 2f
         val half  = laneW * 0.36f
@@ -247,6 +255,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         canvas.drawText(pod.answer.toString(), cx, pod.y + textPaint.textSize * 0.36f, textPaint)
     }
 
+    // ship draw
     private fun drawPixelShip(canvas: Canvas, cx: Float, cy: Float, px: Float) {
         val cols   = shipPixels[0].size
         val rows   = shipPixels.size
@@ -275,6 +284,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
+    // lane draw
     private fun drawDashedLine(canvas: Canvas, x1: Float, y1: Float, x2: Float, y2: Float,
                                 dashLen: Float, gapLen: Float) {
         val p = Paint().apply {
@@ -288,6 +298,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
+    // wave build
     private fun spawnWave() {
         val correctLane = Random.nextInt(3)
         val (eq, ans)   = generateEquation()
@@ -304,6 +315,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         onScoreChanged?.invoke(scoreInt, equationText, livesInt)
     }
 
+    // math make
     private fun generateEquation(): Pair<String, Int> {
         return when (Random.nextInt(3)) {
             0    -> { val a = Random.nextInt(3, 15); val b = Random.nextInt(3, 15)
@@ -315,6 +327,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         }
     }
 
+    // wrong make
     private fun generateWrongAnswers(correct: Int): List<Int> {
         val wrongs = mutableSetOf<Int>()
         while (wrongs.size < 2) {
@@ -325,6 +338,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         return wrongs.toList()
     }
 
+    // stars init
     private fun initStars() {
         if (starsInit || width == 0) return
         repeat(40) {
@@ -340,6 +354,7 @@ class LiebnitzGameView @JvmOverloads constructor(
 
     fun getCurrentEquation() = equationText
 
+    // game reset
     fun resetGame() {
         pods.clear()
         scoreInt   = 0
@@ -358,6 +373,7 @@ class LiebnitzGameView @JvmOverloads constructor(
         invalidate()
     }
 
+    // life drop
     private fun handleMistake() {
         shakeFrames = 8
         livesInt--

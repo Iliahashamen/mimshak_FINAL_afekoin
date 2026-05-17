@@ -37,6 +37,7 @@ class AfequizActivity : AppCompatActivity() {
     private val colorTimerWarn by lazy { getColor(R.color.accent_red) }
     private val colorTimerOk   by lazy { getColor(R.color.accent_green) }
 
+    // screen init
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_afequiz)
@@ -51,6 +52,7 @@ class AfequizActivity : AppCompatActivity() {
         showNextQuestion()
     }
 
+    // quiz load
     private fun loadQuestions() {
         try {
             val inputStream: InputStream = assets.open("questions.json")
@@ -77,6 +79,7 @@ class AfequizActivity : AppCompatActivity() {
         }
     }
 
+    // question show
     private fun showNextQuestion() {
         if (currentQuestionIndex >= questionList.size) {
             endGame()
@@ -100,6 +103,7 @@ class AfequizActivity : AppCompatActivity() {
         }
     }
 
+    // answer check
     private fun checkAnswer(btn: Button, correct: String, selectedText: String) {
         optionButtons.forEach { it.isEnabled = false }
 
@@ -123,12 +127,14 @@ class AfequizActivity : AppCompatActivity() {
             SoundFx.quizWrong()
         }
 
+        // next delay
         Handler(Looper.getMainLooper()).postDelayed({
             currentQuestionIndex++
             showNextQuestion()
         }, 1800)
     }
 
+    // timer start
     private fun startNewTimer(millis: Long) {
         timer?.cancel()
         timer = object : CountDownTimer(millis, 1000) {
@@ -144,15 +150,18 @@ class AfequizActivity : AppCompatActivity() {
         }.start()
     }
 
+    // game finish
     private fun endGame() {
         timer?.cancel()
         if (score > 0) {
             lifecycleScope.launch {
                 try {
+                    // auth guard
                     if (FirebaseAuth.getInstance().currentUser == null) {
                         navigateToLogin()
                         return@launch
                     }
+                    // reward save
                     val reward = score.toDouble()
                     FirebaseWallet.addCredits(reward, "Quiz — $score/15 correct")
                     withContext(Dispatchers.Main) {
@@ -175,6 +184,7 @@ class AfequizActivity : AppCompatActivity() {
         }
     }
 
+    // result route
     private fun navigateToResults() {
         startActivity(Intent(this, QuizResultActivity::class.java).apply {
             putExtra("SCORE", score)
@@ -183,6 +193,7 @@ class AfequizActivity : AppCompatActivity() {
         finish()
     }
 
+    // login route
     private fun navigateToLogin() {
         startActivity(Intent(this, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

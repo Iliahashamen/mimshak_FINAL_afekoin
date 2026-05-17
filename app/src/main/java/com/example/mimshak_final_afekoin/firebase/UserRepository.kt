@@ -15,6 +15,7 @@ object UserRepository {
     private val db get() = FirebaseFirestore.getInstance()
     private val storage get() = FirebaseStorage.getInstance()
 
+    // profile parse
     private fun docToProfile(doc: com.google.firebase.firestore.DocumentSnapshot): Profile? {
         if (!doc.exists()) return null
         return Profile(
@@ -26,12 +27,14 @@ object UserRepository {
     }
 
     // skip cache when we need the latest balance
+    // profile fetch
     suspend fun getProfile(uid: String, forceServer: Boolean = false): Profile? {
         val source = if (forceServer) Source.SERVER else Source.DEFAULT
         val snap = db.collection(FirestorePaths.USERS).document(uid).get(source).await()
         return docToProfile(snap)
     }
 
+    // photo upload
     suspend fun uploadProfilePhoto(localUri: Uri): String {
         val uid = auth.currentUser?.uid ?: error("Not signed in")
         val ref = storage.reference.child("${FirestorePaths.PROFILE_IMAGES}/$uid.jpg")
@@ -41,6 +44,7 @@ object UserRepository {
         return download
     }
 
+    // list history
     suspend fun transactionsForUser(uid: String): List<LedgerEntry> {
         val snap = db.collection(FirestorePaths.TRANSACTIONS)
             .whereEqualTo("userId", uid)
@@ -59,6 +63,7 @@ object UserRepository {
             .sortedByDescending { it.createdAt?.seconds ?: 0L }
     }
 
+    // user create
     suspend fun createUserDocument(uid: String, username: String, startingBalance: Double = 30.0) {
         db.collection(FirestorePaths.USERS).document(uid).set(
             hashMapOf(
